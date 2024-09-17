@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농작물재해보험 계약 현황 검색 서비스</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>농작물재해보험 계약 현황 검색 서비스</h1>
+    <form id="searchForm" action="/search" method="GET">
+        <input type="text" name="query" id="query" placeholder="Enter search term">
+        <select name="file_type" id="file_type">
+            <option value="paddy1">Paddy Crop 1</option>
+            <option value="paddy2">Paddy Crop 2</option>
+            <option value="special">Special Crops</option>
+            <option value="fruit">Fruit Crops</option>
+            <option value="field">Field Crops</option>
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="results">
+        {% if results %}
+        <table>
+            <thead>
+                <tr>
+                    {% for header in results[0].keys() %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    {% for value in row.values() %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>검색 결과 없음</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+
