@@ -17,7 +17,7 @@ contract_paddy = pd.concat([contract_paddy1, contract_paddy2], ignore_index=True
 def index():
     page = 1
     total_pages = 0
-    return render_template('index.html', results=[], page=page, total_pages=total_pages)
+    return render_template('project1.html', results=[], page=page, total_pages=total_pages)
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -30,10 +30,12 @@ def search():
     page = int(request.args.get('page', 1))
     per_page = 20
 
-    queries = [q.strip() for q in query.split(',')]
-
+    if ',' in query:
+        queries = [q.strip() for q in query.split(',')]
+    else:
+        queries = [query.strip(), '']
     if not query or not crop_type:
-        return render_template('index.html', results=[], page=page, total_pages=0)
+        return render_template('project1.html', results=[], page=page, total_pages=0)
 
     # 근사값
     def filter_data(data, name, value):
@@ -43,10 +45,10 @@ def search():
         return data
 
     # 필터링
-    if crop_type == 'paddy':  # paddy1과 paddy2 통합 검색
+    if crop_type == 'paddy':
         result = contract_paddy[
-            (contract_paddy['품목명'].str.contains(queries[0], case=False, na=False)) &
-            (contract_paddy['품종명'].str.contains(queries[1], case=False, na=False))
+            (contract_paddy['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
+            (contract_paddy['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
         result = filter_data(result, '표준수확량', std_yield)
         result = filter_data(result, '평년수확량', avg_yield)
@@ -55,15 +57,15 @@ def search():
 
     elif crop_type == 'special':
         result = contract_special[
-            (contract_special['품목명'].str.contains(queries[0], case=False, na=False)) &
-            (contract_special['품종명'].str.contains(queries[1], case=False, na=False))
+            (contract_special['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
+            (contract_special['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
         result = filter_data(result, '보험가입면적(m2)', ins_area)
 
     elif crop_type == 'fruit':
         result = contract_fruit[
-            (contract_fruit['품목명'].str.contains(queries[0], case=False, na=False)) &
-            (contract_fruit['품종명'].str.contains(queries[1], case=False, na=False))
+            (contract_fruit['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
+            (contract_fruit['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
         result = filter_data(result, '표준수확량', std_yield)
         result = filter_data(result, '평년수확량', avg_yield)
@@ -71,8 +73,8 @@ def search():
 
     elif crop_type == 'field':
         result = contract_field[
-            (contract_field['품목명'].str.contains(queries[0], case=False, na=False)) &
-            (contract_field['품종명'].str.contains(queries[1], case=False, na=False))
+            (contract_field['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
+            (contract_field['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
         result = filter_data(result, '표준수확량', std_yield)
         result = filter_data(result, '평년수확량', avg_yield)
@@ -80,7 +82,7 @@ def search():
         result = filter_data(result, '보험가입면적', ins_area)
 
     else:
-        return render_template('index.html', results=[], page=page, total_pages=0)
+        return render_template('project1.html', results=[], page=page, total_pages=0)
 
     # 페이지네이션
     total_rows = len(result)
@@ -94,7 +96,7 @@ def search():
 
     columns = result.columns.tolist()
 
-    return render_template('index.html', results=results, columns=columns, page=page, total_pages=total_pages)
+    return render_template('project1.html', results=results, columns=columns, page=page, total_pages=total_pages)
 
 
 if __name__ == '__main__':
