@@ -45,12 +45,12 @@
     <h1>농작물재해보험 계약 현황 검색 서비스</h1>
 
     <form id="searchForm" method="GET" action="/search">
-        <label for="crop_type">작물 종류 선택:</label>
+        <label for="crop_type">작물종류(필수):</label>
         <select name="crop_type" id="crop_type" onchange="toggleFields()" required>
-            <option value="paddy">Paddy Crops</option>
-            <option value="special">Special Crops</option>
-            <option value="fruit">Fruit Crops</option>
-            <option value="field">Field Crops</option>
+            <option value="paddy">논작물</option>
+            <option value="special">특용작물</option>
+            <option value="fruit">과수작물</option>
+            <option value="field">밭작물</option>
         </select>
 
         <!-- 필수 조건 입력 -->

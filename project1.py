@@ -4,11 +4,11 @@ import pandas as pd
 app = Flask("APFS")
 
 # 데이터 로드
-contract_paddy1 = pd.read_csv('C:/Users/서보성/Desktop/농업정책보험금융원_농작물재해보험 논작물세부정보_20221231_part1.csv', encoding='EUC-KR', on_bad_lines='skip')
-contract_paddy2 = pd.read_csv('C:/Users/서보성/Desktop/농업정책보험금융원_농작물재해보험 논작물세부정보_20221231_part2.csv', encoding='EUC-KR', on_bad_lines='skip')
-contract_special = pd.read_csv('C:/Users/서보성/Desktop/농업정책보험금융원_농작물재해보험 계약된 특용작물 세부현황_20221231.csv', encoding='UTF-8-SIG', on_bad_lines='skip')
-contract_fruit = pd.read_csv('C:/Users/서보성/Desktop/농업정책보험금융원_농작물재해보험 계약된 과수작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
-contract_field = pd.read_csv('C:/Users/서보성/Desktop/농업정책보험금융원_농작물재해보험 계약된 밭작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
+contract_paddy1 = pd.read_csv('농업정책보험금융원_농작물재해보험 논작물세부정보_20221231_part1.csv', encoding='EUC-KR', on_bad_lines='skip')
+contract_paddy2 = pd.read_csv('농업정책보험금융원_농작물재해보험 논작물세부정보_20221231_part2.csv', encoding='EUC-KR', on_bad_lines='skip')
+contract_special = pd.read_csv('농업정책보험금융원_농작물재해보험 계약된 특용작물 세부현황_20221231.csv', encoding='UTF-8-SIG', on_bad_lines='skip')
+contract_fruit = pd.read_csv('농업정책보험금융원_농작물재해보험 계약된 과수작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
+contract_field = pd.read_csv('농업정책보험금융원_농작물재해보험 계약된 밭작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
 
 # 데이터 통합
 contract_paddy = pd.concat([contract_paddy1, contract_paddy2], ignore_index=True)
@@ -43,7 +43,7 @@ def search():
         return data
 
     # 필터링
-    if crop_type == 'paddy': 
+    if crop_type == 'paddy':  # paddy1과 paddy2 통합 검색
         result = contract_paddy[
             (contract_paddy['품목명'].str.contains(queries[0], case=False, na=False)) &
             (contract_paddy['품종명'].str.contains(queries[1], case=False, na=False))
