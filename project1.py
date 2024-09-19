@@ -43,7 +43,7 @@ def search():
         return data
 
     # 필터링
-    if crop_type == 'paddy':  # paddy1과 paddy2 통합 검색
+    if crop_type == 'paddy': 
         result = contract_paddy[
             (contract_paddy['품목명'].str.contains(queries[0], case=False, na=False)) &
             (contract_paddy['품종명'].str.contains(queries[1], case=False, na=False))
