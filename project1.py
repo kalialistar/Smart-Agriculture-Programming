@@ -15,18 +15,16 @@ contract_paddy = pd.concat([contract_paddy1, contract_paddy2], ignore_index=True
 
 @app.route('/')
 def index():
-    page = 1
-    total_pages = 0
-    return render_template('project1.html', results=[], page=page, total_pages=total_pages)
+    return render_template('result1.html')
 
 @app.route('/search', methods=['GET'])
 def search():
-    query = request.args.get('query')
-    crop_type = request.args.get('crop_type')
-    std_yield = request.args.get('std_yield')
-    avg_yield = request.args.get('avg_yield')
-    ins_yield = request.args.get('ins_yield')
-    ins_area = request.args.get('ins_area')
+    query = request.args.get('query', '')
+    crop_type = request.args.get('crop_type', '')
+    std_yield = request.args.get('std_yield', '')
+    avg_yield = request.args.get('avg_yield', '')
+    ins_yield = request.args.get('ins_yield', '')
+    ins_area = request.args.get('ins_area', '')
     page = int(request.args.get('page', 1))
     per_page = 20
 
@@ -34,10 +32,11 @@ def search():
         queries = [q.strip() for q in query.split(',')]
     else:
         queries = [query.strip(), '']
-    if not query or not crop_type:
-        return render_template('project1.html', results=[], page=page, total_pages=0)
 
-    # 근사값
+    if not crop_type:
+        return render_template('result1.html')
+
+    # 근사값을 찾는 필터링 함수
     def filter_data(data, name, value):
         if value:
             data['approx'] = (data[name] - float(value)).abs()
@@ -50,41 +49,31 @@ def search():
             (contract_paddy['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
             (contract_paddy['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
-        result = filter_data(result, '표준수확량', std_yield)
-        result = filter_data(result, '평년수확량', avg_yield)
-        result = filter_data(result, '가입수확량', ins_yield)
-        result = filter_data(result, '보험가입면적', ins_area)
-
     elif crop_type == 'special':
         result = contract_special[
             (contract_special['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
             (contract_special['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
-        result = filter_data(result, '보험가입면적(m2)', ins_area)
-
     elif crop_type == 'fruit':
         result = contract_fruit[
             (contract_fruit['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
             (contract_fruit['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
-        result = filter_data(result, '표준수확량', std_yield)
-        result = filter_data(result, '평년수확량', avg_yield)
-        result = filter_data(result, '가입수확량', ins_yield)
-
     elif crop_type == 'field':
         result = contract_field[
             (contract_field['품목명'].str.contains(queries[0], case=False, na=False) | (queries[0] == '')) &
             (contract_field['품종명'].str.contains(queries[1], case=False, na=False) | (queries[1] == ''))
         ]
-        result = filter_data(result, '표준수확량', std_yield)
-        result = filter_data(result, '평년수확량', avg_yield)
-        result = filter_data(result, '가입수확량', ins_yield)
-        result = filter_data(result, '보험가입면적', ins_area)
-
     else:
-        return render_template('project1.html', results=[], page=page, total_pages=0)
+        return render_template('result1.html')
 
-    # 페이지네이션
+    # 추가 필터링 적용
+    result = filter_data(result, '표준수확량', std_yield)
+    result = filter_data(result, '평년수확량', avg_yield)
+    result = filter_data(result, '가입수확량', ins_yield)
+    result = filter_data(result, '보험가입면적', ins_area)
+
+    # 페이지네이션 처리
     total_rows = len(result)
     total_pages = (total_rows // per_page) + (1 if total_rows % per_page else 0)
 
@@ -93,11 +82,11 @@ def search():
     paginated_result = result.iloc[start_row:end_row]
 
     results = paginated_result.to_dict(orient='records')
-
     columns = result.columns.tolist()
 
-    return render_template('project1.html', results=results, columns=columns, page=page, total_pages=total_pages)
-
+    # 검색 조건과 함께 결과를 렌더링 (테이블만 보이도록)
+    return render_template('result2.html', results=results, columns=columns, page=page, total_pages=total_pages,
+                           query=query, crop_type=crop_type, std_yield=std_yield, avg_yield=avg_yield, ins_yield=ins_yield, ins_area=ins_area)
 
 if __name__ == '__main__':
     app.run(debug=True)
