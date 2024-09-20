@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>농작물재해보험 계약 내용 조회 결과</title>
+
     <style>
+        // 조회 결과 페이지 디자인
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -102,7 +104,7 @@
             </tbody>
         </table>
 
-        <!-- 페이지네이션 -->
+        // 페이지네이션
         <div class="pagination">
             {% if page > 1 %}
                 <a href="?query={{ query }}&crop_type={{ crop_type }}&std_yield={{ std_yield }}&avg_yield={{ avg_yield }}&ins_yield={{ ins_yield }}&ins_area={{ ins_area }}&page={{ page - 1 }}">이전</a>
@@ -119,7 +121,7 @@
         <p>검색 결과 없음</p>
     {% endif %}
 
-    <!-- 다시 검색 버튼 -->
+    // 재조회
     <div class="back-button">
         <a href="/">다시 조회</a>
     </div>

@@ -36,7 +36,7 @@ def search():
     if not crop_type:
         return render_template('result1.html')
 
-    # 근사값을 찾는 필터링 함수
+    # 근사값
     def filter_data(data, name, value):
         if value:
             data['approx'] = (data[name] - float(value)).abs()
@@ -67,13 +67,12 @@ def search():
     else:
         return render_template('result1.html')
 
-    # 추가 필터링 적용
     result = filter_data(result, '표준수확량', std_yield)
     result = filter_data(result, '평년수확량', avg_yield)
     result = filter_data(result, '가입수확량', ins_yield)
     result = filter_data(result, '보험가입면적', ins_area)
 
-    # 페이지네이션 처리
+    # 페이지네이션
     total_rows = len(result)
     total_pages = (total_rows // per_page) + (1 if total_rows % per_page else 0)
 
@@ -84,7 +83,7 @@ def search():
     results = paginated_result.to_dict(orient='records')
     columns = result.columns.tolist()
 
-    # 검색 조건과 함께 결과를 렌더링 (테이블만 보이도록)
+    # 렌더링
     return render_template('result2.html', results=results, columns=columns, page=page, total_pages=total_pages,
                            query=query, crop_type=crop_type, std_yield=std_yield, avg_yield=avg_yield, ins_yield=ins_yield, ins_area=ins_area)
 
