@@ -10,7 +10,7 @@ contract_special = pd.read_csv('농업정책보험금융원_농작물재해보�
 contract_fruit = pd.read_csv('농업정책보험금융원_농작물재해보험 계약된 과수작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
 contract_field = pd.read_csv('농업정책보험금융원_농작물재해보험 계약된 밭작물 세부현황_20221231.csv', encoding='EUC-KR', on_bad_lines='skip')
 
-# 데이터 통합
+# 데이터 통합(ChatGPT 도움)
 contract_paddy = pd.concat([contract_paddy1, contract_paddy2], ignore_index=True)
 
 @app.route('/')
@@ -28,6 +28,7 @@ def search():
     page = int(request.args.get('page', 1))
     per_page = 20
 
+    # 데이터 구분(ChatGPT 도움)
     if ',' in query:
         queries = [q.strip() for q in query.split(',')]
     else:
@@ -36,7 +37,7 @@ def search():
     if not crop_type:
         return render_template('result1.html')
 
-    # 근사값
+    # 근사값(ChatGPT의 도움)
     def filter_data(data, name, value):
         if value:
             data['approx'] = (data[name] - float(value)).abs()
@@ -72,7 +73,7 @@ def search():
     result = filter_data(result, '가입수확량', ins_yield)
     result = filter_data(result, '보험가입면적', ins_area)
 
-    # 페이지네이션
+    # 페이지네이션(ChatGPT의 도움)
     total_rows = len(result)
     total_pages = (total_rows // per_page) + (1 if total_rows % per_page else 0)
 
