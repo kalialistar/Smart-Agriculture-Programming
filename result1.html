@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>농작물재해보험 계약 내용 조회 서비스</title>
 
-    <!--조회 페이지 디자인-->
+    <!--조회 페이지 디자인(ChatGPT의 도움)-->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,7 +63,7 @@
     </style>
 
     <script>
-        <!--입력란 제어-->
+        <!--입력란 제어(ChatGPT의 도움)-->
         function toggleFields() {
             const cropType = document.getElementById('crop_type').value;
             const insuranceAreaField = document.getElementById('ins_area');
@@ -75,7 +75,7 @@
             if (cropType === 'fruit') {
                 insuranceAreaField.disabled = true;
                 insuranceAreaField.value = '';
-                insuranceAreaField.placeholder = '데이터 미제공';  // 비활성화 시 placeholder 설정
+                insuranceAreaField.placeholder = '데이터 미제공';  
                 stdYieldField.disabled = false;
                 avgYieldField.disabled = false;
                 insYieldField.disabled = false;
