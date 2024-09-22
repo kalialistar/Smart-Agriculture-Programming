@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>농작물재해보험 계약 내용 조회 결과</title>
 
-    <!--조회 결과 페이지 디자인-->
+    <!--조회 결과 페이지 디자인(ChatGPT 도움)-->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -107,7 +107,7 @@
             </tbody>
         </table>
 
-      <!--페이지네이션-->
+      <!--페이지네이션(ChatGPT 도움)-->
         <div class="pagination">
             {% if page > 1 %}
                 <a href="?query={{ query }}&crop_type={{ crop_type }}&std_yield={{ std_yield }}&avg_yield={{ avg_yield }}&ins_yield={{ ins_yield }}&ins_area={{ ins_area }}&page={{ page - 1 }}">이전</a>
