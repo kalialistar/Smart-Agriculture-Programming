@@ -1,0 +1,45 @@
+import streamlit as st
+
+# 배경 이미지 설정 (이미지 URL 사용)
+page_bg_img = '''
+<style>
+body {
+    background-image: url("https://your-background-image-url.com/image.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+</style>
+'''
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# 타이틀에 스타일 적용 (애니메이션, 색상 변경)
+st.markdown("<h1 style='text-align: center; color: lightblue; font-size: 48px;'>BMI 계산기</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: white;'>건강 상태를 확인하세요!</h3>", unsafe_allow_html=True)
+
+# 사용자로부터 키(cm)와 몸무게(kg) 입력받기 (슬라이더 사용)
+height = st.slider("키를 선택하세요(cm)", min_value=100, max_value=250, value=170)
+weight = st.slider("몸무게를 선택하세요(kg)", min_value=30, max_value=150, value=70)
+
+# BMI 계산 함수
+def calculate_bmi(height, weight):
+    height_m = height / 100  # 키를 미터 단위로 변환
+    bmi = weight / (height_m ** 2)
+    return bmi
+
+# BMI 계산 버튼
+if st.button('BMI 계산'):
+    bmi = calculate_bmi(height, weight)
+    st.write(f"당신의 BMI는 {bmi:.2f}입니다.")
+
+    # BMI에 따른 결과 출력 (색상 및 스타일 적용)
+    if bmi < 18.5:
+        st.markdown(f"<h3 style='color: orange;'>저체중입니다: {bmi:.2f}</h3>", unsafe_allow_html=True)
+    elif 18.5 <= bmi < 24.9:
+        st.markdown(f"<h3 style='color: green;'>정상 체중입니다: {bmi:.2f}</h3>", unsafe_allow_html=True)
+    elif 25 <= bmi < 29.9:
+        st.markdown(f"<h3 style='color: orange;'>과체중입니다: {bmi:.2f}</h3>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<h3 style='color: red;'>비만입니다: {bmi:.2f}</h3>", unsafe_allow_html=True)
