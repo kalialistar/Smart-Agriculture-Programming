@@ -232,6 +232,8 @@ mountain_translation = {
     '두륜산': 'Duryunsan', '한라산': 'Hallasan'
 }
 
+mt_height_posit = pd.read_csv('project04/foliage/mt_height_posit.csv', encoding='utf-8')
+
 # 산 이름을 영어로 변환
 mt_height_posit['산'] = mt_height_posit['산'].map(mountain_translation)
 
