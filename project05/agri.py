@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date, timedelta
 
 # 파일 업로드 기능 추가
-uploaded_file = st.file_uploader("CSV 파일을 선택하세요", type="csv")
+uploaded_file = st.file_uploader("data_file", type="csv")
 
 if uploaded_file is not None:
     # 파일을 읽어서 세션에 저장
