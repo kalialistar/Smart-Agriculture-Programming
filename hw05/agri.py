@@ -4,10 +4,11 @@ import pandas as pd
 from datetime import date, timedelta
 
 # 데이터 로드 및 세션 상태에서 관리
-file_path = '임대농기계보유현황.csv'
+file_path = 'hw05/data_file.csv'
 
 if 'data' not in st.session_state:
-    st.session_state['data'] = pd.read_csv(file_path, encoding='euc-kr')
+
+    st.session_state['data'] = pd.read_csv(file_path, encoding='utf-8-sig')
 
 data = st.session_state['data']
 
