@@ -213,7 +213,7 @@ from streamlit_folium import folium_static
 st.title("2024 Fall Foliage Prediction Map Starting From 10/10")
 
 # 산 위치 데이터 (위도, 경도 파일 로드)
-mt_height_posit = pd.read_csv("mt_height_posit.csv", encoding='utf-8')
+mt_height_posit = pd.read_csv("project04/foliage/mt_height_posit.csv", encoding='utf-8')
 
 # 예측 결과를 DataFrame 형태로 저장합니다.
 predictions_2024 = pd.DataFrame({
