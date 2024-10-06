@@ -15,8 +15,8 @@ file_path_mt_height = 'project04/foliage/mt_height_posit.csv'  # mt_height_posit
 file_path_weather = 'project04/foliage/weather_2014_2023.csv'  # weather_2014_2023.csv 파일 경로
 
 # 파일을 읽어서 세션에 저장
-if 'fall_data' not in st.session_state:
-    st.session_state['fall_data'] = pd.read_csv(file_path_fall, encoding='utf-8')
+if 'foliage_data' not in st.session_state:
+    st.session_state['foliage_data'] = pd.read_csv(file_path_fall, encoding='utf-8')
 
 if 'altitude_data' not in st.session_state:
     st.session_state['altitude_data'] = pd.read_csv(file_path_mt_height, encoding='utf-8')
@@ -25,7 +25,7 @@ if 'weather_data' not in st.session_state:
     st.session_state['weather_data'] = pd.read_csv(file_path_weather, encoding='utf-8')
 
 # 데이터를 세션에서 가져옴
-fall_data = st.session_state['fall_data']
+foliage_data = st.session_state['foliage_data']
 altitude_data = st.session_state['altitude_data']
 weather_data = st.session_state['weather_data']
 
