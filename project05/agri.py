@@ -11,11 +11,11 @@ if uploaded_file is not None:
     st.write(df)  # 데이터프레임 출력
 
 # 데이터 로드 및 세션 상태에서 관리
-file_path = 'hw05/data_file.csv'
+file_path = 'project05/data_file.csv'
 
 if 'data' not in st.session_state:
 
-    st.session_state['data'] = pd.read_csv(file_path, encoding='utf-8-sig')
+    st.session_state['data'] = pd.read_csv(file_path, encoding='euc-kr')
 
 data = st.session_state['data']
 
