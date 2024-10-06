@@ -9,10 +9,26 @@ import matplotlib.pyplot as plt
 # 고도에 따른 기온감률 설정 (약 1000m당 6.5°C 감소)
 lapse_rate = 6.5 / 1000
 
-# 단풍 및 기상 데이터 로드
-foliage_data = pd.read_csv('fall_2014_2023.csv')
-altitude_data = pd.read_csv('mt_height_posit.csv')
-weather_data = pd.read_csv('weather_2014_2023.csv')
+# foliage 폴더 내에 있는 CSV 파일을 불러옵니다.
+file_path_fall = 'foliage/fall_2014_2023.csv'  # fall_2014_2023.csv 파일 경로
+file_path_mt_height = 'foliage/mt_height_posit.csv'  # mt_height_posit.csv 파일 경로
+file_path_weather = 'foliage/weather_2014_2023.csv'  # weather_2014_2023.csv 파일 경로
+
+# 파일을 읽어서 세션에 저장
+if 'fall_data' not in st.session_state:
+    st.session_state['fall_data'] = pd.read_csv(file_path_fall, encoding='utf-8')
+
+if 'altitude_data' not in st.session_state:
+    st.session_state['altitude_data'] = pd.read_csv(file_path_mt_height, encoding='utf-8')
+
+if 'weather_data' not in st.session_state:
+    st.session_state['weather_data'] = pd.read_csv(file_path_weather, encoding='utf-8')
+
+# 데이터를 세션에서 가져옴
+fall_data = st.session_state['fall_data']
+altitude_data = st.session_state['altitude_data']
+weather_data = st.session_state['weather_data']
+
 
 # 고도 데이터를 포함한 단풍 데이터 병합
 foliage_data = foliage_data.merge(altitude_data, on='산', how='left')
@@ -75,8 +91,15 @@ rf_peak = RandomForestRegressor(n_estimators=200, random_state=42)
 rf_start.fit(X_train, y_train_start)
 rf_peak.fit(X_train, y_train_peak)
 
+# foliage 폴더 내에 있는 2024년 기상 데이터를 불러옵니다.
+file_path_weather_2024 = 'foliage/weather_2024.csv'  # weather_2024.csv 파일 경로
+
 # 2024년 기상 데이터 로드
-weather_2024 = pd.read_csv('weather_2024.csv', encoding='euc-kr')
+if 'weather_2024' not in st.session_state:
+    st.session_state['weather_2024'] = pd.read_csv(file_path_weather_2024, encoding='euc-kr')
+
+# 데이터를 세션에서 가져옴
+weather_2024 = st.session_state['weather_2024']
 
 # '시점' 컬럼을 문자열로 변환하여 필터링에 사용
 weather_2024['시점'] = weather_2024['시점'].astype(str)
