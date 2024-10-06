@@ -3,6 +3,13 @@ import streamlit as st
 import pandas as pd
 from datetime import date, timedelta
 
+# 파일 업로드 기능 추가
+uploaded_file = st.file_uploader("CSV 파일을 선택하세요", type="csv")
+if uploaded_file is not None:
+    # 업로드한 파일을 데이터프레임으로 읽기
+    df = pd.read_csv(uploaded_file)
+    st.write(df)  # 데이터프레임 출력
+
 # 데이터 로드 및 세션 상태에서 관리
 file_path = 'hw05/data_file.csv'
 
