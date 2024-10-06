@@ -3,19 +3,21 @@ import streamlit as st
 import pandas as pd
 from datetime import date, timedelta
 
-# 데이터 로드 및 세션 상태에서 관리
-file_path = 'project05/data_file.csv'
+# 파일 업로드 기능 추가
+uploaded_file = st.file_uploader("data_file", type="csv")
 
-if 'data' not in st.session_state:
-    st.session_state['data'] = pd.read_csv(file_path, encoding='euc-kr')
+if uploaded_file is not None:
+    st.session_state['data'] = pd.read_csv(uploaded_file, encoding='euc-kr')
+    data = st.session_state['data']
 
-data = st.session_state['data']
+    # 데이터가 잘 불러와졌는지 확인
+    st.write(data)
 
 # Streamlit 애플리케이션
 st.title('경기도 농기계 임대 시스템')
 
 # 농기계 목록 및 수량을 먼저 보여줌
-st.write('현재 농기계 보유 현황:')
+st.write('현재 농기계 보유 현황')
 st.dataframe(data[['시군명', '이앙기수(대)', '트랙터수(대)', '콤바인수(대)', '파종기수(대)', '관리기수(대)']])
 
 # 농기계 선택을 먼저 하도록 함
