@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 lapse_rate = 6.5 / 1000
 
 # foliage 폴더 내에 있는 CSV 파일을 불러옵니다.
-file_path_fall = 'foliage/fall_2014_2023.csv'  # fall_2014_2023.csv 파일 경로
-file_path_mt_height = 'foliage/mt_height_posit.csv'  # mt_height_posit.csv 파일 경로
-file_path_weather = 'foliage/weather_2014_2023.csv'  # weather_2014_2023.csv 파일 경로
+file_path_fall = 'project04/foliage/fall_2014_2023.csv'  # fall_2014_2023.csv 파일 경로
+file_path_mt_height = 'project04/foliage/mt_height_posit.csv'  # mt_height_posit.csv 파일 경로
+file_path_weather = 'project04/foliage/weather_2014_2023.csv'  # weather_2014_2023.csv 파일 경로
 
 # 파일을 읽어서 세션에 저장
 if 'fall_data' not in st.session_state:
@@ -92,7 +92,7 @@ rf_start.fit(X_train, y_train_start)
 rf_peak.fit(X_train, y_train_peak)
 
 # foliage 폴더 내에 있는 2024년 기상 데이터를 불러옵니다.
-file_path_weather_2024 = 'foliage/weather_2024.csv'  # weather_2024.csv 파일 경로
+file_path_weather_2024 = 'project04/foliage/weather_2024.csv'  # weather_2024.csv 파일 경로
 
 # 2024년 기상 데이터 로드
 if 'weather_2024' not in st.session_state:
