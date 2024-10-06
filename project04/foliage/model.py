@@ -426,9 +426,9 @@ st.pyplot(fig)
 
 
 # 파일 경로에 맞게 데이터 불러오기
-weather_2014_2023 = pd.read_csv('weather_2014_2023.csv', encoding='utf-8')  # 2014~2023년도 기상 데이터
-mt_height_posit = pd.read_csv('mt_height_posit.csv', encoding='utf-8')  # 산 고도 데이터 파일
-weather_2024 = pd.read_csv('weather_2024.csv', encoding='euc-kr')  # 2024년 기상 데이터 파일
+weather_2014_2023 = pd.read_csv('project04/foliage/weather_2014_2023.csv', encoding='utf-8')  # 2014~2023년도 기상 데이터
+mt_height_posit = pd.read_csv('project04/foliage/mt_height_posit.csv', encoding='utf-8')  # 산 고도 데이터 파일
+weather_2024 = pd.read_csv('project04/foliage/weather_2024.csv', encoding='euc-kr')  # 2024년 기상 데이터 파일
 
 # 산과 관측지점 매핑 사전
 mountain_to_observation = {
