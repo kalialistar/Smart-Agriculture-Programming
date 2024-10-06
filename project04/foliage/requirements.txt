@@ -5,3 +5,4 @@ streamlit
 matplotlib
 folium
 branca
+streamlit-folium
