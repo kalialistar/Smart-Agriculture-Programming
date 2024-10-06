@@ -2,16 +2,13 @@ import streamlit as st
 import pandas as pd
 from datetime import date, timedelta
 
-# 파일 업로드 기능 추가
-uploaded_file = st.file_uploader("data_file", type="csv")
+# 로컬 경로에 있는 CSV 파일을 불러옵니다.
+file_path = 'data_file.csv'  # 프로젝트 폴더 내 CSV 파일 경로
 
-if uploaded_file is not None:
-    # 파일을 읽어서 세션에 저장
-    st.session_state['data'] = pd.read_csv(uploaded_file, encoding='euc-kr')
-    data = st.session_state['data']
-
-    # 데이터가 제대로 불러와졌는지 확인
-    st.write(data)
+# 파일을 읽어서 세션에 저장
+if 'data' not in st.session_state:
+    st.session_state['data'] = pd.read_csv(file_path, encoding='euc-kr')
+data = st.session_state['data']
 
     # Streamlit 애플리케이션
     st.title('경기도 농기계 임대 시스템')
