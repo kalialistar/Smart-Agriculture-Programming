@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date, timedelta
 
 # 로컬 경로에 있는 CSV 파일을 불러옵니다.
-file_path = 'data_file.csv'  # 프로젝트 폴더 내 CSV 파일 경로
+file_path = 'project05/data_file.csv'  # 프로젝트 폴더 내 CSV 파일 경로
 
 # 파일을 읽어서 세션에 저장
 if 'data' not in st.session_state:
