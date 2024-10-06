@@ -10,9 +10,6 @@ if 'data' not in st.session_state:
     st.session_state['data'] = pd.read_csv(file_path, encoding='utf-8-sig')
 data = st.session_state['data']
 
-# 데이터가 제대로 불러와졌는지 확인
-st.write(data)
-
 # Streamlit 애플리케이션
 st.title('경기도 농기계 임대 시스템')
 
