@@ -489,8 +489,8 @@ st.pyplot(plt)
 
 
 # 1. 기상 데이터 파일 불러오기 (실제 경로로 수정 필요)
-weather_2014_2023 = pd.read_csv('weather_2014_2023.csv',encoding='utf-8')  # 2014-2023 데이터
-weather_2024 = pd.read_csv('weather_2024.csv', encoding='euc-kr')  # 2024 데이터
+weather_2014_2023 = pd.read_csv('project04/foliage/weather_2014_2023.csv',encoding='utf-8')  # 2014-2023 데이터
+weather_2024 = pd.read_csv('project04/foliage/weather_2024.csv', encoding='euc-kr')  # 2024 데이터
 
 # '시점' 열을 문자열로 변환
 weather_2014_2023['시점'] = weather_2014_2023['시점'].astype(str)
@@ -532,8 +532,8 @@ ax.legend(fontsize='8')  # small, medium, large 등 사용 가능. 또는 숫자
 st.pyplot(fig)
 
 # 데이터 로드
-weather_2014_2023 = pd.read_csv('weather_2014_2023.csv', encoding='utf-8')  # 2014~2023 기상 데이터
-weather_2024 = pd.read_csv('weather_2024.csv', encoding='euc-kr')  # 2024 기상 데이터
+weather_2014_2023 = pd.read_csv('project04/foliage/weather_2014_2023.csv', encoding='utf-8')  # 2014~2023 기상 데이터
+weather_2024 = pd.read_csv('project04/foliage/weather_2024.csv', encoding='euc-kr')  # 2024 기상 데이터
 
 # '시점' 컬럼에서 연도를 추출하여 'year' 컬럼을 생성
 weather_2014_2023['year'] = weather_2014_2023['시점'].astype(str).str[:4].astype(int)
