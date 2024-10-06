@@ -7,7 +7,7 @@ file_path = 'project05/data_file.csv'  # 프로젝트 폴더 내 CSV 파일 경�
 
 # 파일을 읽어서 세션에 저장
 if 'data' not in st.session_state:
-    st.session_state['data'] = pd.read_csv(file_path, encoding='euc-kr')
+    st.session_state['data'] = pd.read_csv(file_path, encoding='utf-8-sig')
 data = st.session_state['data']
 
 # 데이터가 제대로 불러와졌는지 확인
