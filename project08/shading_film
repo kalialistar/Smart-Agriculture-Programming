@@ -1,0 +1,266 @@
+import requests
+import vonage
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+import smtplib
+import streamlit as st
+import time
+import re
+
+# 발신자 이메일과 앱 비밀번호 고정
+SENDER_EMAIL = "jbnushading@gmail.com"
+SENDER_PASSWORD = "zvrx ilcp jmfv qfrm"
+
+# Nexmo(Vonage) API 설정
+client = vonage.Client(key="89282f8a", secret="NJmve0B6Ot19OQYW")
+sms = vonage.Sms(client)
+
+
+# 발신 이메일 서비스 선택에 따른 SMTP 설정 함수
+def get_smtp_settings():
+    return {'smtp_server': 'smtp.gmail.com', 'port': 587, 'email': SENDER_EMAIL, 'password': SENDER_PASSWORD}
+
+
+# 차광막 상태와 시간을 관리
+shade_status = "Open"
+shade_close_time = None
+
+
+# 이메일 형식 검증 함수 추가
+def is_valid_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
+
+
+# 전화번호 형식 검증 함수 추가
+def is_valid_phone(phone):
+    return re.match(r'^82\d{10}$', phone) is not None
+
+
+# Streamlit 페이지 스타일링 추가
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #F0FFF0;
+    }
+    h1 {
+        color: #228B22;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+        font-size: 30px;
+        margin-bottom: 50px;
+    }
+    .css-18e3th9 {
+        padding-top: 1rem;
+    }
+    .stButton button {
+        display: block;
+        margin: 0 auto;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 20px;
+        border-radius: 12px;
+        padding: 10px 24px;
+        border: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# 타이틀을 한 줄로 정리하고 중앙에 배치
+st.markdown('<h1>전북대 실시간 온실 차광막 제어 및 알림 시스템</h1>', unsafe_allow_html=True)
+
+# 전화번호 입력 필드
+recipient_phone = st.text_input('전화번호 입력 (한국은 8210 뒤 8자리 입력, 예: 821012345678)', max_chars=12)
+
+# 서버에 등록되지 않은 전화번호 경고 문구 추가
+st.markdown(
+    """
+    <p>주의: 등록되지 않은 전화번호는 SMS 문자를 받을 수 없으니 이메일을 이용해주세요.</p>
+    """,
+    unsafe_allow_html=True
+)
+
+# 수신 이메일 주소 입력 필드
+recipient_email = st.text_input('수신 이메일 입력')
+
+# 사용자가 일사량과 기온 기준 값 설정
+temp_threshold = st.number_input("기온 임계값 (℃)", min_value=-50.0, max_value=50.0, value=30.0)
+radiation_threshold = st.number_input("일사량 임계값 (W/m²)", min_value=0.0, max_value=3000.0, value=700.0)
+
+
+# 전북대학교 기상데이터 불러오는 함수
+def fetch_weather_data():
+    current_time = datetime.now()
+    url = f"http://203.239.47.148:8080/dspnet.aspx?Site=85&Dev=1&Year={current_time.year}&Mon={current_time.month:02d}&Day={current_time.day:02d}"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.text.splitlines()
+        last_record = data[-1].split(",")  # 마지막 줄의 데이터
+        timestamp = last_record[0]
+        temperature = float(last_record[1])
+        radiation = float(last_record[6])
+        return timestamp, temperature, radiation, current_time
+    except Exception as e:
+        st.error(f"데이터 불러오기 실패: {e}")
+        return None, None, None, None
+
+
+# 차광막 제어 함수 정의
+def control_shade(temperature, radiation, temp_threshold, radiation_threshold, phone_number, fetch_time):
+    global shade_status, shade_close_time
+    current_time_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    adjusted_temp_threshold = temp_threshold - 5.0
+
+    st.write(f"현재 기온: {temperature}°C, 일사량: {radiation}W/m²")
+    st.write(f"기온 임계값: {temp_threshold}°C, 일사량 임계값: {radiation_threshold}W/m²")
+    st.write(f"기상 데이터 수집 시각: {fetch_time.strftime('%Y-%m-%d %H:%M:%S')}")  # 데이터를 가져온 시각을 표시
+
+    # 차광막 닫힘 조건이 충족되면 차광막을 닫고 알림 전송
+    if (radiation > radiation_threshold and temperature > adjusted_temp_threshold) and shade_status == "Open":
+        shade_status = "Closed"
+        shade_close_time = datetime.now()
+        send_initial_monitoring_alerts(temperature, radiation, phone_number)  # 작동 시작 알림
+        send_email_close(temperature, radiation, current_time_str)  # 차광막 닫힘 알림
+        send_sms(f"전북대 온실 차광막 제어 시스템\n차광막이 닫혔습니다.", phone_number)
+        send_sms(f"현재 기온: {round(temperature, 2)}°C, 일사량: {radiation}W/m²", phone_number)
+        st.write(f"차광막이 닫힘: {current_time_str}")
+
+    # 차광막 열림 조건이 충족되면 차광막을 열고 알림 전송
+    elif (radiation <= radiation_threshold or temperature <= temp_threshold) and shade_status == "Closed":
+        shade_status = "Open"
+        shade_open_time = datetime.now()
+        total_closed_duration = shade_open_time - shade_close_time
+        send_email_open(temperature, radiation, current_time_str, total_closed_duration)
+        send_sms(f"전북대 온실 차광막 제어 시스템\n차광막이 열렸습니다.", phone_number)
+        send_sms(f"현재 기온: {round(temperature, 2)}°C, 일사량: {radiation}W/m²", phone_number)
+        send_sms(f"닫힌 시간: {total_closed_duration}", phone_number)
+        st.write(f"차광막이 열림: {current_time_str}, 닫혀있던 시간: {total_closed_duration}")
+
+
+# SMS 전송 함수 (문자 메시지 두 번 나누어 전송)
+def send_sms(message, phone_number):
+    if phone_number and is_valid_phone(phone_number):  # 전화번호가 입력되었고 유효한 형식일 때만 실행
+        try:
+            if len(message) > 70:
+                first_message = message[:70]
+                second_message = message[70:]
+
+                response_data1 = sms.send_message({
+                    "from": "전북대 온실",
+                    "to": phone_number,
+                    "text": first_message,
+                    "type": "unicode"
+                })
+
+                response_data2 = sms.send_message({
+                    "from": "전북대 온실",
+                    "to": phone_number,
+                    "text": second_message,
+                    "type": "unicode"
+                })
+
+                if response_data1["messages"][0]["status"] == "0" and response_data2["messages"][0]["status"] == "0":
+                    st.success("SMS 전송 성공!")
+                else:
+                    st.error(
+                        f"SMS 전송 실패: {response_data1['messages'][0]['error-text']} 또는 {response_data2['messages'][0]['error-text']}")
+            else:
+                response_data = sms.send_message({
+                    "from": "전북대 온실",
+                    "to": phone_number,
+                    "text": message,
+                    "type": "unicode"
+                })
+
+                if response_data["messages"][0]["status"] == "0":
+                    st.success("SMS 전송 성공!")
+                else:
+                    st.error(f"SMS 전송 실패: {response_data['messages'][0]['error-text']}")
+        except Exception as e:
+            st.error(f"SMS 전송 실패: {e}")
+    elif phone_number and not is_valid_phone(phone_number):
+        st.error("올바른 전화번호 형식이 아닙니다. 82로 시작하는 12자리 숫자를 입력하세요.")
+
+
+# 모니터링 시작 알림 이메일 및 SMS 전송 함수
+def send_initial_monitoring_alerts(temperature, radiation, phone_number):
+    message = f"실시간 모니터링 서비스가 작동 중입니다.\n현재 기온: {temperature}°C, 일사량: {radiation}W/m²."
+
+    if is_valid_email(recipient_email):  # 이메일이 유효한 경우만 전송
+        send_email(message)
+    if is_valid_phone(phone_number):  # 전화번호가 유효한 경우만 전송
+        send_sms(message, phone_number)
+
+
+# 이메일 발송 함수 (차광막 닫힘)
+def send_email_close(temperature, radiation, time_str):
+    if recipient_email:  # 이메일이 입력되었을 때만 전송
+        message = f"차광막이 닫혔습니다.\n현재 기온: {round(temperature, 2)}°C, 일사량: {radiation}W/m²\n{time_str}에 차광막이 닫혔습니다."
+        send_email(message)
+
+
+# 이메일 발송 함수 (차광막 열림)
+def send_email_open(temperature, radiation, time_str, total_closed_duration):
+    if recipient_email:  # 이메일이 입력되었을 때만 전송
+        message = f"차광막이 열렸습니다.\n현재 기온: {round(temperature, 2)}°C, 일사량: {radiation}W/m²\n{time_str}에 차광막이 열렸으며, 닫혀있던 시간: {total_closed_duration}입니다."
+        send_email(message)
+
+
+# 이메일 발송 함수 정의
+def send_email(message):
+    smtp_settings = get_smtp_settings()
+    if smtp_settings is None:
+        st.error("올바른 이메일 서비스를 선택하세요.")
+        return
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f'"전북대 온실 차광막 제어 시스템"'
+        msg['To'] = recipient_email
+        msg['Subject'] = '차광막 작동 알림'
+        msg.attach(MIMEText(message, 'plain'))
+
+        with smtplib.SMTP(smtp_settings['smtp_server'], smtp_settings['port']) as server:
+            server.starttls()
+            server.login(smtp_settings['email'], smtp_settings['password'])
+            server.sendmail(smtp_settings['email'], recipient_email, msg.as_string())
+
+        st.success("이메일 전송 완료!")
+    except Exception as e:
+        st.error(f"이메일 전송 오류: {e}")
+
+
+# 실시간 데이터 수집 및 차광막 제어 실행
+def start_monitoring():
+    # 입력된 값에 대한 형식 검증
+    phone_valid = is_valid_phone(recipient_phone)
+    email_valid = is_valid_email(recipient_email)
+
+    if not recipient_phone and not recipient_email:
+        st.error("전화번호 또는 이메일을 입력하세요.")
+        return
+    elif recipient_phone and not phone_valid:
+        st.error("올바른 전화번호 형식이 아닙니다.")
+        return
+    elif recipient_email and not email_valid:
+        st.error("올바른 이메일 형식이 아닙니다.")
+        return
+
+    timestamp, temperature, radiation, fetch_time = fetch_weather_data()
+    if timestamp is not None and (temperature is not None or radiation is not None):
+        send_initial_monitoring_alerts(temperature, radiation, recipient_phone)
+        while True:
+            control_shade(temperature, radiation, temp_threshold, radiation_threshold, recipient_phone, fetch_time)
+            time.sleep(600)  # 10분마다 데이터 갱신
+
+
+# 실시간 모니터링 시작 버튼
+st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+if st.button('실시간 모니터링 시작'):
+    start_monitoring()
+st.markdown("</div>", unsafe_allow_html=True)
