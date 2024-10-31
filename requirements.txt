@@ -3,3 +3,10 @@ vonage
 pandas
 matplotlib
 streamlit
+smtplib
+math
+re
+MIMEText
+MIMEMultipart
+timedelta
+datetime
