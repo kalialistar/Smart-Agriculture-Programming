@@ -8,7 +8,7 @@ on:
 
 jobs:
   greenhouse_monitoring:
-    runs-on: ubuntu-latest  # Ubuntu 환경에서 실행
+    runs-on: windows-latest  # Windows 환경에서 실행
 
     steps:
       # 레포지토리에서 코드 체크아웃
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Python 버전 설정
+          python-version: '3.12'  # Python 버전 설정
 
       # 의존성 설치
       - name: Install dependencies
