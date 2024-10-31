@@ -4,16 +4,18 @@ name: Greenhouse Monitoring
 on:
   schedule:
     - cron: '0 * * * *'  # 매 정각 (UTC 기준)
-  workflow_dispatch:     # 수동으로 실행할 수 있는 옵션
+  workflow_dispatch:  # 수동으로 실행할 수 있는 옵션
 
 jobs:
   greenhouse_monitoring:
     runs-on: windows-latest  # Windows 환경에서 실행
 
     steps:
-      # 레포지토리에서 코드 체크아웃
+      # 레포지토리에서 코드 체크아웃 (루트에 체크아웃)
       - name: Check out the repository
         uses: actions/checkout@v2
+        with:
+          path: Smart-Agriculture-Programming  # 레포지토리를 특정 경로에 체크아웃
 
       # Python 설정
       - name: Set up Python
@@ -21,7 +23,6 @@ jobs:
         with:
           python-version: '3.12'  # Python 버전 설정
 
-      # 작업 디렉토리를 명시적으로 설정해 경로 문제 해결
       # 의존성 설치
       - name: Install dependencies
         run: |
