@@ -2,8 +2,7 @@ requests
 vonage
 pandas
 matplotlib
-streamlit
-smtplib
+streamlit==1.39.0
 math
 re
 MIMEText
