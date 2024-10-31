@@ -1,0 +1,5 @@
+requests
+vonage
+pandas
+matplotlib
+streamlit
