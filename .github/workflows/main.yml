@@ -14,6 +14,8 @@ jobs:
       # 레포지토리에서 코드 체크아웃 (루트에 체크아웃)
       - name: Check out the repository
         uses: actions/checkout@v2
+        with:
+          path: Smart-Agriculture-Programming  # 중첩 경로 문제 해결을 위해 경로 지정
 
       # Python 설정
       - name: Set up Python
