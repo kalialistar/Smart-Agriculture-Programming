@@ -19,16 +19,17 @@ jobs:
           python-version: 3.12
 
       - name: Install Python dependencies
-        working-directory: Smart-Agriculture-Programming
         shell: cmd
         run: |
+          cd Smart-Agriculture-Programming
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Python script
-        working-directory: Smart-Agriculture-Programming/project08
         shell: cmd
-        run: python shading_film1.py
+        run: |
+          cd Smart-Agriculture-Programming/project08
+          python shading_film1.py
 
       - name: Deploy to Cafe24 Web Hosting via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
