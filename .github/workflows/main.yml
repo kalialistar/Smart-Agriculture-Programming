@@ -20,15 +20,15 @@ jobs:
 
       - name: Install Python dependencies
         shell: cmd
+        working-directory: Smart-Agriculture-Programming
         run: |
-          cd Smart-Agriculture-Programming
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Python script
         shell: cmd
+        working-directory: Smart-Agriculture-Programming/project08
         run: |
-          cd Smart-Agriculture-Programming/project08
           python shading_film1.py
 
       - name: Deploy to Cafe24 Web Hosting via FTP
