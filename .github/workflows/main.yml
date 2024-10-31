@@ -23,13 +23,15 @@ jobs:
 
       # 의존성 설치
       - name: Install dependencies
-        working-directory: Smart-Agriculture-Programming  # 작업 디렉토리 설정 수정
+        working-directory: Smart-Agriculture-Programming
+        shell: cmd  # Windows 환경에서는 cmd 셸을 사용하여 경로 문제 해결
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
-        working-directory: Smart-Agriculture-Programming/project08  # 작업 디렉토리 설정
+        working-directory: Smart-Agriculture-Programming/project08
+        shell: cmd  # Windows 환경에서는 cmd 셸을 사용하여 경로 문제 해결
         run: |
           python shading_film1.py
