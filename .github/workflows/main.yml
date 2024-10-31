@@ -30,4 +30,5 @@ jobs:
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
         run: |
+          cd Smart-Agriculture-Programming/project08/  # 파일이 있는 경로로 이동
           python shading_film1.py
