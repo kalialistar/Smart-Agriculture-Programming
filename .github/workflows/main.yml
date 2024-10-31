@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest  # Windows 환경에서 실행
 
     steps:
-      # 레포지토리에서 코드 체크아웃 (루트에 체크아웃)
+      # 레포지토리에서 코드 체크아웃
       - name: Check out the repository
         uses: actions/checkout@v2
 
@@ -21,16 +21,16 @@ jobs:
         with:
           python-version: '3.12'  # Python 버전 설정
 
+      # 작업 디렉토리를 명시적으로 설정해 경로 문제 해결
       # 의존성 설치
       - name: Install dependencies
-        working-directory: Smart-Agriculture-Programming
         run: |
+          cd Smart-Agriculture-Programming
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
-        working-directory: Smart-Agriculture-Programming/project08
         run: |
-          python shading_film1.py  # 명확한 경로로 접근
-
+          cd Smart-Agriculture-Programming/project08
+          python shading_film1.py
