@@ -30,5 +30,10 @@ jobs:
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
         run: |
-          cd project08  # 파일이 있는 경로로 이동
-          python shading_film1.py
+          python project08/shading_film1.py  # 파일 경로를 명시적으로 적어줍니다
+
+      # 디버깅을 위해 파일 경로 확인 (선택적)
+      - name: List files for debugging
+        run: |
+          dir
+          dir project08
