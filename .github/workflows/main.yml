@@ -11,9 +11,11 @@ jobs:
     runs-on: windows-latest  # Windows 환경에서 실행
 
     steps:
-      # 레포지토리에서 코드 체크아웃
+      # 레포지토리에서 코드 체크아웃 (루트에 체크아웃)
       - name: Check out the repository
         uses: actions/checkout@v2
+        with:
+          path: Smart-Agriculture-Programming  # 레포지토리의 경로 지정
 
       # Python 설정
       - name: Set up Python
@@ -30,10 +32,4 @@ jobs:
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
         run: |
-          python project08/shading_film1.py  # 파일 경로를 명시적으로 적어줍니다
-
-      # 디버깅을 위해 파일 경로 확인 (선택적)
-      - name: List files for debugging
-        run: |
-          dir
-          dir project08
+          python project08/shading_film1.py  # 명확한 경로로 접근
