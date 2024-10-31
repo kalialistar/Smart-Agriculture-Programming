@@ -14,8 +14,6 @@ jobs:
       # 레포지토리에서 코드 체크아웃 (루트에 체크아웃)
       - name: Check out the repository
         uses: actions/checkout@v2
-        with:
-          path: Smart-Agriculture-Programming  # 레포지토리의 경로 지정
 
       # Python 설정
       - name: Set up Python
@@ -27,9 +25,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r Smart-Agriculture-Programming/requirements.txt  # 정확한 경로로 접근
 
       # Python 스크립트 실행
       - name: Run greenhouse monitoring script
         run: |
-          python project08/shading_film1.py  # 명확한 경로로 접근
+          python Smart-Agriculture-Programming/project08/shading_film1.py  # 명확한 경로로 접근
