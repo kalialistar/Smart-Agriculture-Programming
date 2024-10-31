@@ -3,9 +3,3 @@ vonage
 pandas
 matplotlib
 streamlit==1.39.0
-math
-re
-MIMEText
-MIMEMultipart
-timedelta
-datetime
