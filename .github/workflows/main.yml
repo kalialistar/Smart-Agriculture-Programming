@@ -28,8 +28,7 @@ jobs:
       - name: Run Python script
         shell: cmd
         working-directory: Smart-Agriculture-Programming/project08
-        run: |
-          python shading_film1.py
+        run: python shading_film1.py
 
       - name: Deploy to Cafe24 Web Hosting via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
