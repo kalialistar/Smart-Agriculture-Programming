@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: weather-graph
-          path: C:\Users\서보성\Desktop # Replace with the actual path to your graph file
+          path: project08/graphs.png # Replace with the actual path to your graph file
 
