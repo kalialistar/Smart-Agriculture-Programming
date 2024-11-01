@@ -12,6 +12,7 @@ import pandas as pd
 from threading import Thread
 from datetime import datetime, timedelta
 from matplotlib import font_manager, rc
+import os
 
 # 한글 폰트 설정 (Windows의 경우)
 font_path = 'C:/Windows/Fonts/malgun.ttf'  # Windows 환경에서의 한글 폰트 경로
@@ -59,16 +60,13 @@ frost_conditions = {
     }
 }
 
-
 # 이메일 형식 검증 함수
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
 
-
 # 전화번호 형식 검증 함수 (82로 시작하는 12자리 숫자)
 def is_valid_phone(phone):
     return re.match(r'^82\d{10}$', phone) is not None
-
 
 # 발신 이메일 서비스 설정 함수
 def get_smtp_settings():
@@ -78,7 +76,6 @@ def get_smtp_settings():
         'email': SENDER_EMAIL,
         'password': SENDER_PASSWORD
     }
-
 
 # SMS 전송 함수
 def send_sms(message, phone_number):
@@ -99,7 +96,6 @@ def send_sms(message, phone_number):
             st.error(f"SMS 전송 실패: {e}")
     elif phone_number and not is_valid_phone(phone_number):
         st.error("올바른 전화번호 형식이 아닙니다. 82로 시작하는 12자리 숫자를 입력하세요.")
-
 
 # 이메일 발송 함수
 def send_email(message, recipient_email):
@@ -125,7 +121,6 @@ def send_email(message, recipient_email):
             st.error(f"이메일 전송 오류: {e}")
     elif recipient_email and not is_valid_email(recipient_email):
         st.error("올바른 이메일 형식이 아닙니다.")
-
 
 # 기상 데이터 불러오는 함수 (풍속 및 일사량 포함)
 def fetch_plotting_data():
@@ -182,11 +177,9 @@ def fetch_plotting_data():
 
     return timestamps, temperatures, humidities, wind_speeds, irradiances
 
-
 # 낮 시간 여부 확인 함수
 def is_daytime(time_point):
     return 9 <= time_point.hour < 18
-
 
 # 냉해 발생 조건 체크 및 알림 함수
 def check_frost_and_alert(record_time, temperature, humidity, wind_speed, irradiance, phone_number, recipient_email):
@@ -222,7 +215,6 @@ def check_frost_and_alert(record_time, temperature, humidity, wind_speed, irradi
         if "냉해" in st.session_state.alert_sent:
             del st.session_state.alert_sent["냉해"]
 
-
 # 실시간 모니터링 함수
 def monitor_frost(phone_number, recipient_email):
     while st.session_state.get('thread_started', False):
@@ -249,7 +241,6 @@ def monitor_frost(phone_number, recipient_email):
             check_frost_and_alert(record_time, temperature, humidity, wind_speed, irradiance, phone_number,
                                   recipient_email)
         time.sleep(600)  # 10분마다 실행
-
 
 # 그래프 그리기 함수
 def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None):
@@ -314,10 +305,10 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         ax.legend(loc='upper right', fontsize='small')
 
         plt.title(f"{parameter} 모니터링", fontsize=12)
+        plt.savefig("project08/graphs.png")  # 그래프를 파일로 저장
         st.pyplot(fig)
     except Exception as e:
         st.error(f"그래프를 그리는 중 오류가 발생했습니다: {e}")
-
 
 # 실시간 데이터를 업데이트하고 그래프를 그리는 함수
 def update_and_plot_graphs():
@@ -327,7 +318,6 @@ def update_and_plot_graphs():
         timestamps, temperatures, humidities, wind_speeds, irradiances = fetch_plotting_data()
         if timestamps:
             update_data(timestamps, temperatures, humidities, wind_speeds, irradiances)
-
 
     # Streamlit의 Tabs를 사용하여 그래프 선택 가능하게 설정
     tabs = st.tabs(["외부 기온", "외부 습도", "풍속", "일사량"])
@@ -376,7 +366,6 @@ def update_and_plot_graphs():
             threshold=frost_conditions["냉해"]["irradiance_max_day"]
         )
 
-
 # 데이터 업데이트 함수
 def update_data(timestamps, temperatures, humidities, wind_speeds, irradiances):
     global data
@@ -393,7 +382,6 @@ def update_data(timestamps, temperatures, humidities, wind_speeds, irradiances):
     # 데이터 정렬
     data.sort_values(by="시간", inplace=True)
     data.reset_index(drop=True, inplace=True)
-
 
 # Streamlit UI
 st.markdown(
@@ -449,9 +437,3 @@ if st.session_state.get('thread_started', False):
     update_and_plot_graphs()
 else:
     st.write("모니터링을 시작하려면 '모니터링 시작' 버튼을 클릭하세요.")
-
-    plt.tight_layout()
-    plt.savefig("project08/graphs.png")  # 그래프를 파일로 저장
-    st.pyplot(fig)
-
-
