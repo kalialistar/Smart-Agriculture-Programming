@@ -28,14 +28,14 @@ jobs:
         shell: cmd
         run: python project08/shading_film1.py
 
-      - name: Deploy to Cafe24 Web Hosting via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: public_html/www/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
+      # - name: Deploy to Cafe24 Web Hosting via FTP
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      #   with:
+      #     server: ${{ secrets.FTP_SERVER }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     server-dir: public_html/www/
+      #     exclude: |
+      #       **/.git*
+      #       **/.git*/**
+      #       **/node_modules/**
