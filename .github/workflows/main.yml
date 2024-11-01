@@ -2,7 +2,7 @@ name: Run Greenhouse Monitoring Code
 
 on:
   schedule:
-    - cron: '0 */24 * * *' # 매일 실행
+    - cron: '*/1 * * * *' # 매일 실행
   workflow_dispatch:
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
       - name: Run Python script
         shell: cmd
         run: |
-          cd Smart-Agriculture-Programming\project08
+          cd project08
           python shading_film1.py
 
       - name: Deploy to Cafe24 Web Hosting via FTP
