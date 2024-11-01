@@ -3,7 +3,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pandas as pd
-import time
+import os
 
 # API 호출 함수
 def fetch_weather_data():
@@ -28,8 +28,8 @@ def fetch_weather_data():
 weather_data = []
 
 # Streamlit 인터페이스 설정
-st.title("실시간 날씨 데이터 모니터링 (테스트: 2개 데이터로 그래프 확인)")
-st.write("현재 시각에서 2개의 데이터만 수집하여 그래프를 그려봅니다.")
+st.title("실시간 날씨 데이터 모니터링")
+st.write("현재 시각에서 8개의 정각 데이터만 수집하여 그래프를 그려봅니다.")
 
 # 데이터 수집 및 그래프 생성 함수
 def update_weather_data():
@@ -76,6 +76,11 @@ def update_weather_data():
     axs[1, 1].legend()
 
     plt.tight_layout()
+    
+    # 그래프를 파일로 저장
+    plt.savefig('project08/graphs.png')  # 그래프 저장 경로
+    plt.close()  # 메모리 해제
+
     st.pyplot(fig)
 
 # Streamlit에서 버튼을 클릭하여 업데이트 테스트
