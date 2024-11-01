@@ -30,13 +30,12 @@ weather_data = []
 st.title("실시간 날씨 데이터 모니터링")
 st.write("현재 시각에서 2개의 데이터만 수집하여 그래프를 그려봅니다.")
 
-# 데이터 수집 및 그래프 생성 함수
+# 그래프 생성
 def update_weather_data():
     global weather_data
     new_data = fetch_weather_data()
     weather_data.append(new_data)
 
-    # 8개 데이터 초과 시, 오래된 데이터 삭제
     if len(weather_data) > 8:
         weather_data.pop(0)
 
@@ -75,12 +74,9 @@ def update_weather_data():
     axs[1, 1].legend()
 
     plt.tight_layout()
-    
-    # 그래프 파일 저장
-    plt.savefig('project08/graphs.png')  # 그래프 파일을 project08 폴더에 저장
-    plt.close(fig)  # 그래프 닫기
+    plt.savefig("project08/graphs.png")  # 그래프를 파일로 저장
     st.pyplot(fig)
-
+    
 # Streamlit에서 버튼을 클릭하여 업데이트 테스트
 if st.button("날씨 데이터 업데이트"):
     update_weather_data()
