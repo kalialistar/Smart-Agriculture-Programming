@@ -21,9 +21,8 @@ jobs:
       - name: Install Python dependencies
         shell: cmd
         run: |
-          # cd Smart-Agriculture-Programming
-          # python -m pip install --upgrade pip
-          pip install -r Smart-Agriculture-Programming/requirements.txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Python script
         shell: cmd
