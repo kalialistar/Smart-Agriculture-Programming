@@ -1,5 +1,7 @@
 requests
 vonage
+email-validator
+smtplib
+streamlit
 pandas
 matplotlib
-streamlit==1.39.0
