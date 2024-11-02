@@ -35,8 +35,8 @@ url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 #     </style>
 #     """, unsafe_allow_html=True)
 
-font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf')
-st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf'}")
+font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NanumGothic.ttf')
+st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NanumGothic.ttf'}")
 # font_path = os.path.join('project08/fonts/NotoSanKR-VariableFont_wght.ttf')ttf
 #
 # st.markdown(f"""
@@ -61,6 +61,7 @@ if os.path.exists(font_path):
     font_prop = fm.FontProperties(fname=font_path)
     st.write(font_prop.get_name())
     plt.rcParams['font.family'] = font_prop.get_name()
+    st.write(plt.rcParams['font.family'])
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 else:
     st.write('font 없음')
