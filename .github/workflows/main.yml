@@ -2,7 +2,7 @@ name: Run Python Code
 
 on:
   schedule:
-    - cron: '0 * * * *' # Executes every hour
+    - cron: '10 * * * *' # Executes every hour
   workflow_dispatch:
 
 jobs:
@@ -27,11 +27,5 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Python script
-        run: python project08/shading_film1.py # Replace with your actual Python file name.
-
-      - name: Upload Graph Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: weather-graph
-          path: project08/graphs.png # Replace with the actual path to your graph file
+        run: python project08/cwd.py # Replace with your actual Python file name.
 
