@@ -479,7 +479,7 @@ st.markdown(
         width: 100%;
     }
     </style>
-    <div class="title">냉해 모니터링 및 알림 시스템</div>
+    <div class="title">전주시 냉해 모니터링 및 알림 시스템</div>
     """,
     unsafe_allow_html=True
 )
