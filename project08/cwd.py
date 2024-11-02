@@ -11,8 +11,8 @@ import matplotlib.dates as mdates
 import pandas as pd
 from threading import Thread
 from datetime import datetime, timedelta
-from matplotlib import rc
-import platform
+from zoneinfo import ZoneInfo  # Python 3.9 이상
+import matplotlib.font_manager as fm
 
 # ---------------------------------
 # 1. API 설정 (stn_id와 auth_key 정의)
@@ -22,23 +22,29 @@ stn_id = "146"  # 지점 ID를 고정합니다
 url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 
 # ---------------------------------
-# 2. 한글 폰트 설정 (Windows에서는 'Malgun Gothic' 사용)
+# 2. 한글 폰트 설정 (Google Fonts에서 'Noto Sans KR' 불러오기)
 # ---------------------------------
-current_os = platform.system()
+# Streamlit UI에 'Noto Sans KR' 폰트 적용
+st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+    /* 스트림릿 전체에 폰트 적용 */
+    body, div, span, p, h1, h2, h3, h4, h5, h6 {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-if current_os == "Windows":
-    font_name = "Malgun Gothic"
-elif current_os == "Darwin":  # macOS
-    font_name = "AppleGothic"
-else:  # 리눅스 등 다른 OS
-    font_name = "NanumGothic"  # 시스템에 설치된 경우
-
+# matplotlib에서 'Noto Sans KR' 폰트 사용 설정
+# 'Noto Sans KR'이 시스템에 설치되어 있지 않으면 기본 폰트로 대체됩니다.
 try:
-    rc('font', family=font_name)
-    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호가 제대로 표시되도록 설정
+    font_path = fm.findfont("Noto Sans KR")
+    font_prop = fm.FontProperties(fname=font_path)
+    plt.rcParams['font.family'] = font_prop.get_name()
+    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 except Exception as e:
-    st.warning(f"폰트 설정에 실패했습니다: {e}")
-    rc('font', family='DejaVu Sans')  # 기본 폰트로 대체
+    st.warning(f"'Noto Sans KR' 폰트 설정에 실패했습니다: {e}")
+    plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 
 # ---------------------------------
@@ -155,10 +161,16 @@ def send_email(message, recipient_email):
         st.error("올바른 이메일 형식이 아닙니다.")
 
 # ---------------------------------
-# 13. 현재 시간을 기준으로 tm1과 tm2를 설정하는 함수
+# 13. 현재 시간을 기준으로 tm1과 tm2를 설정하는 함수 (한국 시간 기준)
 # ---------------------------------
 def get_tm1_tm2():
-    current_time = datetime.now()
+    try:
+        # 한국 시간대 설정
+        current_time = datetime.now(ZoneInfo("Asia/Seoul"))
+    except Exception as e:
+        st.error(f"시간대 설정 오류: {e}")
+        return None, None
+
     current_time = current_time.replace(minute=0, second=0, microsecond=0)  # 현재 시간의 정각으로 설정
 
     # 가장 가까운 8개의 정각 시간 계산 (7시간 전부터 현재 시간까지)
@@ -214,8 +226,9 @@ def extract_weather_data(response_text):
             풍속 = None if 풍속 == '-9' else float(풍속)
             전운량 = None if 전운량 == '-9' else float(전운량)
 
-            # 시간 문자열을 datetime 객체로 변환
+            # 시간 문자열을 datetime 객체로 변환 (한국 시간대)
             시간_dt = datetime.strptime(시간, "%Y%m%d%H%M")
+            시간_dt = 시간_dt.replace(tzinfo=ZoneInfo("Asia/Seoul")).astimezone(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
 
             weather_data.append({
                 "time": 시간_dt,
@@ -235,6 +248,8 @@ def extract_weather_data(response_text):
 # ---------------------------------
 def fetch_past_weather_data():
     tm1, tm2 = get_tm1_tm2()
+    if tm1 is None or tm2 is None:
+        return None
     params = {
         "tm1": tm1,
         "tm2": tm2,
@@ -432,8 +447,13 @@ def update_and_plot_graphs():
         )
 
     with tabs[3]:
-        # 현재 시간이 낮 시간인지 확인
-        current_time = datetime.now()
+        # 현재 시간이 낮 시간인지 확인 (한국 시간 기준)
+        try:
+            current_time = datetime.now(ZoneInfo("Asia/Seoul"))
+        except Exception as e:
+            st.error(f"시간대 설정 오류: {e}")
+            return
+
         if frost_conditions["day_start_hour"] <= current_time.hour < frost_conditions["day_end_hour"]:
             threshold = frost_conditions["irradiance_threshold_day"]
             max_threshold = frost_conditions["irradiance_max_day"]
@@ -445,7 +465,7 @@ def update_and_plot_graphs():
             parameter="일사 (W/m²)",
             ylabel="일사량 (W/m²)",
             actual_color="#FFD700",
-            min_value=0,
+            min_value=0,  # 최소값을 0으로 고정
             max_value=1000,
             y_ticks=list(range(0, 1001, 100)),
             threshold=threshold,
@@ -541,3 +561,21 @@ if st.session_state.get('thread_started', False):
         st.dataframe(data_display.reset_index(drop=True))
     else:
         st.write("기상 데이터를 가져오는 중입니다...")
+
+# ---------------------------------
+# 26. CSV 파일로 저장하는 예제 (선택 사항)
+# ---------------------------------
+def save_data_to_csv():
+    csv_filename = 'weather_data.csv'
+    csv_columns = ['시간', '온도 (°C)', '습도 (%)', '일사 (W/m²)', '풍속 (m/s)', '전운 (1/10)']
+
+    try:
+        with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = pd.DataFrame.to_csv(data, columns=csv_columns, index=False, encoding='utf-8')
+        st.success(f"데이터가 '{csv_filename}' 파일에 저장되었습니다.")
+    except IOError:
+        st.error("파일 쓰기 오류 발생")
+
+# 데이터 저장 버튼 추가 (선택 사항)
+if st.button('데이터 CSV로 저장'):
+    save_data_to_csv()
