@@ -561,21 +561,3 @@ if st.session_state.get('thread_started', False):
         st.dataframe(data_display.reset_index(drop=True))
     else:
         st.write("기상 데이터를 가져오는 중입니다...")
-
-# ---------------------------------
-# 26. CSV 파일로 저장하는 예제 (선택 사항)
-# ---------------------------------
-def save_data_to_csv():
-    csv_filename = 'weather_data.csv'
-    csv_columns = ['시간', '온도 (°C)', '습도 (%)', '일사 (W/m²)', '풍속 (m/s)', '전운 (1/10)']
-
-    try:
-        with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = pd.DataFrame.to_csv(data, columns=csv_columns, index=False, encoding='utf-8')
-        st.success(f"데이터가 '{csv_filename}' 파일에 저장되었습니다.")
-    except IOError:
-        st.error("파일 쓰기 오류 발생")
-
-# 데이터 저장 버튼 추가 (선택 사항)
-if st.button('데이터 CSV로 저장'):
-    save_data_to_csv()
