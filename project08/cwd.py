@@ -1,4 +1,3 @@
-import os
 import requests
 import vonage
 from email.mime.text import MIMEText
@@ -13,7 +12,6 @@ import pandas as pd
 from threading import Thread
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo  # Python 3.9 이상
-import matplotlib.font_manager as fm
 
 # ---------------------------------
 # 1. API 설정 (stn_id와 auth_key 정의)
@@ -23,63 +21,8 @@ stn_id = "146"  # 지점 ID를 고정합니다
 url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 
 # ---------------------------------
-# Streamlit UI에 'Noto Sans KR' 폰트 적용
+# 2. 폰트
 # ---------------------------------
-# st.markdown("""
-#     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-#     <style>
-#     /* Streamlit 전체에 'Noto Sans KR' 폰트 적용 */
-#     body, div, span, p, h1, h2, h3, h4, h5, h6 {
-#         font-family: 'Noto Sans KR', sans-serif;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
-
-font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NanumGothic.ttf')
-st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NanumGothic.ttf'}")
-# font_path = os.path.join('project08/fonts/NotoSanKR-VariableFont_wght.ttf')ttf
-#
-# st.markdown(f"""
-#     <style>
-#     /* 로컬 경로에서 'Noto Sans KR' 폰트 적용 */
-#     @font-face {{
-#         font-family: 'Noto Sans KR';
-#         src: url('NotoSansKR-VariableFont_wght.ttf') format('truetype');
-#     }}
-#     body, div, span, p, h1, h2, h3, h4, h5, h6 {{
-#         font-family: 'Noto Sans KR', sans-serif;
-#     }}
-#     </style>
-#     """, unsafe_allow_html=True)
-
-# ---------------------------------
-# matplotlib에서 'Noto Sans KR' 폰트 사용 설정
-# ---------------------------------
-# font_path = 'project08/NotoSansKR-VariableFont_wght.ttf'  # 업로드된 폰트 파일 경로
-if os.path.exists(font_path):
-    st.write('font 있음')
-    font_prop = fm.FontProperties(fname=font_path)
-    st.write(font_prop.get_name())
-    plt.rcParams['font.family'] = font_prop.get_name()
-    st.write(plt.rcParams['font.family'])
-    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
-else:
-    st.write('font 없음')
-
-    st.warning("'Noto Sans KR' 폰트 파일을 찾을 수 없습니다. 기본 폰트로 설정됩니다.")
-    plt.rcParams['font.family'] = 'DejaVu Sans'
-    plt.rcParams['axes.unicode_minus'] = False
-
-st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <style>
-    /* Streamlit 전체에 'Noto Sans KR' 폰트 적용 */
-    body, div, span, p, h1, h2, h3, h4, h5, h6 {
-        font-family: 'Noto Sans KR', sans-serif;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 
 # ---------------------------------
 # 3. 발신자 이메일과 앱 비밀번호
@@ -387,7 +330,7 @@ def update_data(new_data):
 # 20. X축 레이블 간격 조정 및 데이터가 None인 경우 처리
 # ---------------------------------
 def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None, max_threshold=None):
-    # plt.rcParams['font.family'] = 'Noto Sans KR'
+
 
     if data.empty:
         st.write(f"{parameter} 데이터를 가져오는 중입니다...")
@@ -397,20 +340,20 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         fig, ax = plt.subplots(figsize=(8, 6))  # 크기를 조정하여 가독성 향상
 
         # 시간 기준으로 데이터 정렬
-        data_sorted = data.sort_values(by="시간")
+        data_sorted = data.sort_values(by="Time")
 
         # 해당 파라미터 데이터 추가
-        ax.plot(data_sorted["시간"], data_sorted[parameter], label=parameter, color=actual_color, marker='o')
+        ax.plot(data_sorted["Time"], data_sorted[parameter], label=parameter, color=actual_color, marker='o')
 
         # 기본 임계값 선 추가
         if threshold is not None:
-            ax.axhline(y=threshold, color='green', linestyle='--', label=f'임계값 ({threshold})')
+            ax.axhline(y=threshold, color='green', linestyle='--', label=f'Threshold ({threshold})')
 
         # 최대 임계값 선 추가
         if max_threshold is not None:
-            ax.axhline(y=max_threshold, color='red', linestyle=':', label=f'최대 임계값 ({max_threshold})')
+            ax.axhline(y=max_threshold, color='red', linestyle=':', label=f'Max Threshold ({max_threshold})')
 
-        ax.set_xlabel("시간", fontsize=12)
+        ax.set_xlabel("Time", fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
 
         # X축 레이블 간격 조정
@@ -429,7 +372,7 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         # 레전드를 그래프 내 우측 상단에 배치
         ax.legend(loc='upper right', fontsize='small')
 
-        plt.title(f"{parameter} 모니터링", fontsize=14)
+        plt.title(f"{parameter} Monitoring", fontsize=14)
         st.pyplot(fig)
     except Exception as e:
         st.error(f"그래프를 그리는 중 오류가 발생했습니다: {e}")
@@ -444,12 +387,12 @@ def update_and_plot_graphs():
             for entry in weather_data:
                 update_data(entry)
 
-    tabs = st.tabs(["외부 기온", "외부 습도", "풍속", "일사량", "전운량"])
+    tabs = st.tabs(["기온", "습도", "풍속", "일사량", "전운량"])
 
     with tabs[0]:
         plot_graph(
-            parameter="온도 (°C)",
-            ylabel="온도 (°C)",
+            parameter="Temperature(°C)",
+            ylabel="Temperature(°C)",
             actual_color="#FF0000",
             min_value=-10,
             max_value=40,
@@ -460,8 +403,8 @@ def update_and_plot_graphs():
 
     with tabs[1]:
         plot_graph(
-            parameter="습도 (%)",
-            ylabel="습도 (%)",
+            parameter="Humidity(%)",
+            ylabel="Humidity(%)",
             actual_color="#0000FF",
             min_value=0,
             max_value=100,
@@ -472,8 +415,8 @@ def update_and_plot_graphs():
 
     with tabs[2]:
         plot_graph(
-            parameter="풍속 (m/s)",
-            ylabel="풍속 (m/s)",
+            parameter="Wind Speed(m/s)",
+            ylabel="Wind Speed(m/s)",
             actual_color="#800080",
             min_value=0,
             max_value=10,
@@ -498,8 +441,8 @@ def update_and_plot_graphs():
             max_threshold = None
 
         plot_graph(
-            parameter="일사 (W/m²)",
-            ylabel="일사량 (W/m²)",
+            parameter="Radiation(W/m²)",
+            ylabel="Radiation(W/m²)",
             actual_color="#FFD700",
             min_value=0,  # 최소값을 0으로 고정
             max_value=1000,
@@ -510,8 +453,8 @@ def update_and_plot_graphs():
 
     with tabs[4]:
         plot_graph(
-            parameter="전운 (1/10)",
-            ylabel="전운량 (1/10)",
+            parameter="Cloud Amount(1/10)",
+            ylabel="Cloud Amount(1/10)",
             actual_color="#808080",
             min_value=0,  # Y축 시작을 0으로 설정하여 모든 데이터 포인트 표시
             max_value=10,  # Y축 끝을 10으로 설정
@@ -597,5 +540,3 @@ if st.session_state.get('thread_started', False):
         st.dataframe(data_display.reset_index(drop=True))
     else:
         st.write("기상 데이터를 가져오는 중입니다...")
-
-
