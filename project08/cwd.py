@@ -35,9 +35,9 @@ url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 #     </style>
 #     """, unsafe_allow_html=True)
 
-# font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wghtriableFont_wght.ttf')
-# st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf'}")
-font_path = os.path.join('project08/fonts/NotoSanKR-VariableFont_wght.ttf')
+font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wghtiableFont_wghtriableFont_wght.ttf')
+st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf'}")
+# font_path = os.path.join('project08/fonts/NotoSanKR-VariableFont_wght.ttf')ttf
 
 st.markdown(f"""
     <style>
