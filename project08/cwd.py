@@ -69,6 +69,16 @@ else:
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 
+st.markdown("""
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+    /* Streamlit 전체에 'Noto Sans KR' 폰트 적용 */
+    body, div, span, p, h1, h2, h3, h4, h5, h6 {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 
 # ---------------------------------
 # 3. 발신자 이메일과 앱 비밀번호
@@ -376,6 +386,8 @@ def update_data(new_data):
 # 20. X축 레이블 간격 조정 및 데이터가 None인 경우 처리
 # ---------------------------------
 def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None, max_threshold=None):
+    plt.rcParams['font.family'] = 'Noto Sans KR'
+
     if data.empty:
         st.write(f"{parameter} 데이터를 가져오는 중입니다...")
         return
