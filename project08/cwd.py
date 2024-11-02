@@ -12,7 +12,6 @@ import pandas as pd
 from threading import Thread
 from datetime import datetime, timedelta
 from matplotlib import rc
-import csv
 import platform
 
 # ---------------------------------
@@ -211,7 +210,7 @@ def extract_weather_data(response_text):
             # 값이 -9로 표시된 경우 결측치로 간주
             기온 = None if 기온 == '-9' else float(기온)
             습도 = None if 습도 == '-9' else float(습도)
-            일사 = None if 일사 == '-9' else float(일사) * 277.78  # MJ/m² -> W/m² 변환
+            일사 = None if 일사 == '-9' else max(0.0, float(일사) * 277.78)  # MJ/m² -> W/m² 변환 및 최소 0으로 설정
             풍속 = None if 풍속 == '-9' else float(풍속)
             전운량 = None if 전운량 == '-9' else float(전운량)
 
@@ -542,31 +541,3 @@ if st.session_state.get('thread_started', False):
         st.dataframe(data_display.reset_index(drop=True))
     else:
         st.write("기상 데이터를 가져오는 중입니다...")
-
-# ---------------------------------
-# 26. CSV 파일로 저장하는 예제 (선택 사항)
-# ---------------------------------
-def save_data_to_csv():
-    csv_filename = 'weather_data.csv'
-    csv_columns = ['시간', '온도 (°C)', '습도 (%)', '일사 (W/m²)', '풍속 (m/s)', '전운 (1/10)']
-
-    try:
-        with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-            writer.writeheader()
-            for _, row in data.iterrows():
-                writer.writerow({
-                    '시간': row['시간'].strftime("%Y-%m-%d %H:%M"),
-                    '온도 (°C)': row['온도 (°C)'],
-                    '습도 (%)': row['습도 (%)'],
-                    '일사 (W/m²)': row['일사 (W/m²)'],
-                    '풍속 (m/s)': row['풍속 (m/s)'],
-                    '전운 (1/10)': row['전운 (1/10)']
-                })
-        st.success(f"데이터가 '{csv_filename}' 파일에 저장되었습니다.")
-    except IOError:
-        st.error("파일 쓰기 오류 발생")
-
-# 데이터 저장 버튼 추가 (선택 사항)
-if st.button('데이터 CSV로 저장'):
-    save_data_to_csv()
