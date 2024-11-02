@@ -36,13 +36,13 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # matplotlib에서 'Noto Sans KR' 폰트 사용 설정
-try:
-    # 'Noto Sans KR' 폰트가 시스템에 설치되어 있어야 합니다.
-    font_prop = fm.FontProperties(fname=fm.findfont("Noto Sans KR"))
+font_path = os.path.join(os.getcwd(), 'fonts', 'NotoSansKR-Regular.otf')  # 프로젝트에 'NotoSansKR-Regular.otf' 폰트 추가 필요
+if os.path.exists(font_path):
+    font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = font_prop.get_name()
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
-except Exception as e:
-    st.warning(f"'Noto Sans KR' 폰트 설정에 실패했습니다: {e}")
+else:
+    st.warning("'Noto Sans KR' 폰트 파일이 프로젝트에 없습니다. 기본 폰트로 설정됩니다.")
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 
