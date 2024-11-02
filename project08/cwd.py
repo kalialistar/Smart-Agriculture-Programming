@@ -13,37 +13,36 @@ from threading import Thread
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo  # Python 3.9 이상
 import matplotlib.font_manager as fm
+import os
 
 # ---------------------------------
-# 1. API 설정 (stn_id와 auth_key 정의)
+# 1. Nanum Gothic 폰트 파일 직접 로드하기
 # ---------------------------------
-auth_key = "njld-D40Rb25Xfg-NAW9hA"  # 발급받은 인증키
-stn_id = "146"  # 지점 ID를 고정합니다
-url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
+font_path = "project08/NanumGothic.ttf"  # 폰트 파일 경로
 
-# ---------------------------------
-# 2. 한글 폰트 설정 (Google Fonts에서 'Noto Sans KR' 불러오기)
-# ---------------------------------
-# Streamlit UI에 'Noto Sans KR' 폰트 적용
-st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+# Streamlit UI에 폰트 적용
+st.markdown(
+    f"""
     <style>
-    /* 스트림릿 전체에 폰트 적용 */
-    body, div, span, p, h1, h2, h3, h4, h5, h6 {
-        font-family: 'Noto Sans KR', sans-serif;
-    }
+    @font-face {{
+        font-family: "Nanum Gothic";
+        src: url("file://{os.path.abspath(font_path)}") format("truetype");
+    }}
+    * {{
+        font-family: "Nanum Gothic";
+    }}
     </style>
-    """, unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
-# matplotlib에서 'Noto Sans KR' 폰트 사용 설정
-# 'Noto Sans KR'이 시스템에 설치되어 있지 않으면 기본 폰트로 대체됩니다.
+# matplotlib에서 'Nanum Gothic' 폰트 사용 설정
 try:
-    font_path = fm.findfont("Noto Sans KR")
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = font_prop.get_name()
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 except Exception as e:
-    st.warning(f"'Noto Sans KR' 폰트 설정에 실패했습니다: {e}")
+    st.warning(f"폰트 설정에 실패했습니다: {e}")
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 
