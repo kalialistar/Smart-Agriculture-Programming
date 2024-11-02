@@ -40,13 +40,17 @@ st.markdown("""
 # ---------------------------------
 font_path = 'project08/NotoSansKR-VariableFont_wght.ttf'  # 업로드된 폰트 파일 경로
 if os.path.exists(font_path):
+    st.write('font 있음')
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = font_prop.get_name()
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 else:
+    st.write('font 없음')
+
     st.warning("'Noto Sans KR' 폰트 파일을 찾을 수 없습니다. 기본 폰트로 설정됩니다.")
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
+
 
 # ---------------------------------
 # 3. 발신자 이메일과 앱 비밀번호
@@ -354,10 +358,6 @@ def update_data(new_data):
 # 20. X축 레이블 간격 조정 및 데이터가 None인 경우 처리
 # ---------------------------------
 def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None, max_threshold=None):
-
-    plt.rc('font', family='Malgun Gothic')  
-    plt.rcParams['axes.unicode_minus'] = False  
-    
     if data.empty:
         st.write(f"{parameter} 데이터를 가져오는 중입니다...")
         return
