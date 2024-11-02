@@ -24,8 +24,8 @@ url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 # ---------------------------------
 # 3. 발신자 이메일과 앱 비밀번호
 # ---------------------------------
-SENDER_EMAIL = "jbnushading@gmail.com"
-SENDER_PASSWORD = "zvrx ilcp jmfv qfrm"
+SENDER_EMAIL = "cwdalarm@gmail.com"
+SENDER_PASSWORD = "pnjy yepq mxiw guhn"
 
 # ---------------------------------
 # 4. Vonage API 설정
