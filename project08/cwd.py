@@ -59,8 +59,8 @@ st.markdown(f"""
 if os.path.exists(font_path):
     st.write('font 있음')
     font_prop = fm.FontProperties(fname=font_path)
+    st.write(font_prop.get_name)
     plt.rcParams['font.family'] = font_prop.get_name()
-    # plt.rcParams["font.family"] = 'NanumGothic'
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 else:
     st.write('font 없음')
