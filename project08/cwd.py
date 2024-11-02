@@ -38,19 +38,19 @@ url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 font_path = os.path.join(os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf')
 st.write(f"font path : {os.getcwd(), 'project08/fonts', 'NotoSansKR-VariableFont_wght.ttf'}")
 # font_path = os.path.join('project08/fonts/NotoSanKR-VariableFont_wght.ttf')ttf
-
-st.markdown(f"""
-    <style>
-    /* 로컬 경로에서 'Noto Sans KR' 폰트 적용 */
-    @font-face {{
-        font-family: 'Noto Sans KR';
-        src: url('NotoSansKR-VariableFont_wght.ttf') format('truetype');
-    }}
-    body, div, span, p, h1, h2, h3, h4, h5, h6 {{
-        font-family: 'Noto Sans KR', sans-serif;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
+#
+# st.markdown(f"""
+#     <style>
+#     /* 로컬 경로에서 'Noto Sans KR' 폰트 적용 */
+#     @font-face {{
+#         font-family: 'Noto Sans KR';
+#         src: url('NotoSansKR-VariableFont_wght.ttf') format('truetype');
+#     }}
+#     body, div, span, p, h1, h2, h3, h4, h5, h6 {{
+#         font-family: 'Noto Sans KR', sans-serif;
+#     }}
+#     </style>
+#     """, unsafe_allow_html=True)
 
 # ---------------------------------
 # matplotlib에서 'Noto Sans KR' 폰트 사용 설정
@@ -59,7 +59,7 @@ st.markdown(f"""
 if os.path.exists(font_path):
     st.write('font 있음')
     font_prop = fm.FontProperties(fname=font_path)
-    st.write(font_prop.get_name)
+    st.write(font_prop.get_name())
     plt.rcParams['font.family'] = font_prop.get_name()
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 else:
