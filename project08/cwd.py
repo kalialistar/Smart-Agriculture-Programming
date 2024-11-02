@@ -1,3 +1,4 @@
+import os
 import requests
 import vonage
 from email.mime.text import MIMEText
@@ -19,10 +20,6 @@ from zoneinfo import ZoneInfo  # Python 3.9 이상
 auth_key = "njld-D40Rb25Xfg-NAW9hA"  # 발급받은 인증키
 stn_id = "146"  # 지점 ID를 고정합니다
 url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
-
-# ---------------------------------
-# 2. 폰트
-# ---------------------------------
 
 # ---------------------------------
 # 3. 발신자 이메일과 앱 비밀번호
@@ -58,14 +55,14 @@ if 'thread_started' not in st.session_state:
 # ---------------------------------
 frost_conditions = {
     "temperature_max": -2,  # 기온 -2°C 이하 (필수)
-    "humidity_min": 70,  # 습도 70% 이상 (필수)
-    "cloud_amount_max": 3,  # 전운량 3 이하 (필수)
+    "humidity_min": 70,      # 습도 70% 이상 (필수)
+    "cloud_amount_max": 3,   # 전운량 3 이하 (필수)
     "wind_speed_threshold": 2,  # 풍속 2m/s 이하 (선택)
-    "wind_speed_max": 5,  # 풍속 5m/s 초과 시 알림 제외 (예외)
+    "wind_speed_max": 5,         # 풍속 5m/s 초과 시 알림 제외 (예외)
     "irradiance_threshold_day": 300,  # 일사량 300W/m² 이하 (선택, 오전 9시~오후 6시)
-    "irradiance_max_day": 500,  # 일사량 500W/m² 초과 시 알림 제외 (예외)
-    "day_start_hour": 9,  # 낮 시작 시간
-    "day_end_hour": 18  # 낮 종료 시간
+    "irradiance_max_day": 500,        # 일사량 500W/m² 초과 시 알림 제외 (예외)
+    "day_start_hour": 9,    # 낮 시작 시간
+    "day_end_hour": 18      # 낮 종료 시간
 }
 
 # ---------------------------------
@@ -284,13 +281,13 @@ def check_frost_and_alert(weather_entry, phone_number, recipient_email):
     # 모든 필수 조건과 선택 조건이 만족될 때만 냉해 가능성
     frost_possible = temperature_condition and humidity_condition and cloud_condition and wind_speed_condition and irradiance_condition
 
-    if frost_possible and "냉해" not in st.session_state.alert_sent:
+    if frost_possible and "frost" not in st.session_state.alert_sent:
         alert_message = "경고: 냉해 발생 가능성이 높습니다! 주의하세요."
         send_sms(alert_message, phone_number)
         send_email(alert_message, recipient_email)
-        st.session_state.alert_sent["냉해"] = True
-    elif not frost_possible and "냉해" in st.session_state.alert_sent:
-        del st.session_state.alert_sent["냉해"]
+        st.session_state.alert_sent["frost"] = True
+    elif not frost_possible and "frost" in st.session_state.alert_sent:
+        del st.session_state.alert_sent["frost"]
 
 # ---------------------------------
 # 18. 실시간 데이터 모니터링 및 업데이트 함수
@@ -329,9 +326,7 @@ def update_data(new_data):
 # ---------------------------------
 # 20. X축 레이블 간격 조정 및 데이터가 None인 경우 처리
 # ---------------------------------
-def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None, max_threshold=None):
-
-
+def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, threshold=None, max_threshold=None, legend_label=None):
     if data.empty:
         st.write(f"{parameter} 데이터를 가져오는 중입니다...")
         return
@@ -340,10 +335,10 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         fig, ax = plt.subplots(figsize=(8, 6))  # 크기를 조정하여 가독성 향상
 
         # 시간 기준으로 데이터 정렬
-        data_sorted = data.sort_values(by="Time")
+        data_sorted = data.sort_values(by="시간")
 
         # 해당 파라미터 데이터 추가
-        ax.plot(data_sorted["Time"], data_sorted[parameter], label=parameter, color=actual_color, marker='o')
+        ax.plot(data_sorted["시간"], data_sorted[parameter], label=legend_label or parameter, color=actual_color, marker='o')
 
         # 기본 임계값 선 추가
         if threshold is not None:
@@ -353,6 +348,7 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         if max_threshold is not None:
             ax.axhline(y=max_threshold, color='red', linestyle=':', label=f'Max Threshold ({max_threshold})')
 
+        # X축과 Y축 레이블을 영어로 설정
         ax.set_xlabel("Time", fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
 
@@ -372,7 +368,8 @@ def plot_graph(parameter, ylabel, actual_color, min_value, max_value, y_ticks, t
         # 레전드를 그래프 내 우측 상단에 배치
         ax.legend(loc='upper right', fontsize='small')
 
-        plt.title(f"{parameter} Monitoring", fontsize=14)
+        # 그래프 제목을 영어로 설정
+        plt.title(f"{legend_label} Monitoring", fontsize=14)
         st.pyplot(fig)
     except Exception as e:
         st.error(f"그래프를 그리는 중 오류가 발생했습니다: {e}")
@@ -387,42 +384,45 @@ def update_and_plot_graphs():
             for entry in weather_data:
                 update_data(entry)
 
-    tabs = st.tabs(["기온", "습도", "풍속", "일사량", "전운량"])
+    tabs = st.tabs(["Temperature", "Humidity", "Wind Speed", "Radiation", "Cloud Amount"])
 
     with tabs[0]:
         plot_graph(
-            parameter="Temperature(°C)",
-            ylabel="Temperature(°C)",
+            parameter="온도 (°C)",  # 데이터 열 이름은 한글로 유지
+            ylabel="Temperature (°C)",  # Y축 레이블은 영어로 표시
             actual_color="#FF0000",
             min_value=-10,
             max_value=40,
             y_ticks=list(range(-10, 41, 5)),
             threshold=frost_conditions["temperature_max"],
-            max_threshold=None  # 온도는 최대 임계값이 없음
+            max_threshold=None,  # 온도는 최대 임계값이 없음
+            legend_label="Temperature (°C)"  # 레전드 라벨을 영어로 설정
         )
 
     with tabs[1]:
         plot_graph(
-            parameter="Humidity(%)",
-            ylabel="Humidity(%)",
+            parameter="습도 (%)",
+            ylabel="Humidity (%)",
             actual_color="#0000FF",
             min_value=0,
             max_value=100,
             y_ticks=list(range(0, 101, 10)),
             threshold=frost_conditions["humidity_min"],
-            max_threshold=None  # 습도는 최대 임계값이 없음
+            max_threshold=None,  # 습도는 최대 임계값이 없음
+            legend_label="Humidity (%)"  # 레전드 라벨을 영어로 설정
         )
 
     with tabs[2]:
         plot_graph(
-            parameter="Wind Speed(m/s)",
-            ylabel="Wind Speed(m/s)",
+            parameter="풍속 (m/s)",
+            ylabel="Wind Speed (m/s)",
             actual_color="#800080",
             min_value=0,
             max_value=10,
             y_ticks=list(range(0, 11, 1)),
             threshold=frost_conditions["wind_speed_threshold"],
-            max_threshold=frost_conditions["wind_speed_max"]
+            max_threshold=frost_conditions["wind_speed_max"],
+            legend_label="Wind Speed (m/s)"  # 레전드 라벨을 영어로 설정
         )
 
     with tabs[3]:
@@ -430,7 +430,7 @@ def update_and_plot_graphs():
         try:
             current_time = datetime.now(ZoneInfo("Asia/Seoul"))
         except Exception as e:
-            st.error(f"시간대 설정 오류: {e}")
+            st.error(f"Timezone setting error: {e}")
             return
 
         if frost_conditions["day_start_hour"] <= current_time.hour < frost_conditions["day_end_hour"]:
@@ -441,29 +441,29 @@ def update_and_plot_graphs():
             max_threshold = None
 
         plot_graph(
-            parameter="Radiation(W/m²)",
-            ylabel="Radiation(W/m²)",
+            parameter="일사 (W/m²)",  # 데이터 열 이름은 한글 유지
+            ylabel="Radiation (W/m²)",  # Y축 레이블은 영어로 표시
             actual_color="#FFD700",
-            min_value=0,  # 최소값을 0으로 고정
+            min_value=0,
             max_value=1000,
             y_ticks=list(range(0, 1001, 100)),
             threshold=threshold,
-            max_threshold=max_threshold
+            max_threshold=max_threshold,
+            legend_label="Radiation (W/m²)"  # 레전드 라벨을 영어로 설정
         )
 
     with tabs[4]:
         plot_graph(
-            parameter="Cloud Amount(1/10)",
-            ylabel="Cloud Amount(1/10)",
+            parameter="전운 (1/10)",
+            ylabel="Cloud Amount (1/10)",
             actual_color="#808080",
-            min_value=0,  # Y축 시작을 0으로 설정하여 모든 데이터 포인트 표시
-            max_value=10,  # Y축 끝을 10으로 설정
+            min_value=0,
+            max_value=10,
             y_ticks=list(range(0, 11, 1)),
             threshold=frost_conditions["cloud_amount_max"],
-            max_threshold=None  # 전운량은 최대 임계값이 없음
+            max_threshold=None,  # 전운량은 최대 임계값이 없음
+            legend_label="Cloud Amount (1/10)"  # 레전드 라벨을 영어로 설정
         )
-
-    # 그래프 아래에 데이터프레임 표시하지 않음
 
 # ---------------------------------
 # 22. Streamlit UI 설정
