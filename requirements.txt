@@ -1,7 +1,6 @@
 requests
 vonage
 email-validator
-smtplib
 streamlit
 pandas
 matplotlib
