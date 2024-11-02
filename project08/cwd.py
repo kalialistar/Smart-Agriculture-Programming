@@ -23,7 +23,7 @@ stn_id = "146"  # 지점 ID를 고정합니다
 url = "https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php"
 
 # ---------------------------------
-# 2. Google Fonts에서 'Noto Sans KR' 불러오기 및 Streamlit UI에 적용
+# Streamlit UI에 'Noto Sans KR' 폰트 적용
 # ---------------------------------
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
@@ -35,14 +35,16 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# ---------------------------------
 # matplotlib에서 'Noto Sans KR' 폰트 사용 설정
-font_path = os.path.join(os.getcwd(), 'fonts', 'NotoSansKR-Regular.otf')  # 프로젝트에 'NotoSansKR-Regular.otf' 폰트 추가 필요
+# ---------------------------------
+font_path = 'project08/NotoSansKR-VariableFont_wght.ttf'  # 업로드된 폰트 파일 경로
 if os.path.exists(font_path):
     font_prop = fm.FontProperties(fname=font_path)
     plt.rcParams['font.family'] = font_prop.get_name()
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 정상 표시
 else:
-    st.warning("'Noto Sans KR' 폰트 파일이 프로젝트에 없습니다. 기본 폰트로 설정됩니다.")
+    st.warning("'Noto Sans KR' 폰트 파일을 찾을 수 없습니다. 기본 폰트로 설정됩니다.")
     plt.rcParams['font.family'] = 'DejaVu Sans'
     plt.rcParams['axes.unicode_minus'] = False
 
