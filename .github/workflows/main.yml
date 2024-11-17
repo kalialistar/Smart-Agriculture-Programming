@@ -2,7 +2,7 @@ name: Run Cold Weather Damage
 
 on:
   schedule:
-    - cron: '10 * * * *' # Executes every hour
+    - cron: '* * * * 1' # Executes every hour
   workflow_dispatch:
 
 jobs:
