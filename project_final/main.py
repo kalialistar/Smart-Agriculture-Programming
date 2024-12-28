@@ -1,4 +1,4 @@
-# thonny 코드(이티보드 및 시스템 동작 코드)
+# etboard 및 시스템을 동작시키는 thonny 코드
 
 from machine import Pin, I2C
 from time import sleep
