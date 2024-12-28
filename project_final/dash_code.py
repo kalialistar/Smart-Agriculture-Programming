@@ -8,7 +8,7 @@ import matplotlib.font_manager as fm
 from main_code import sensor_data, graph_data, start_sensor_thread, data_lock
 
 # 폰트 경로 설정
-font_path = '/Smart-Agriculture-Programming/project_final/NanumGothic.ttf'
+font_path = '/mount/src/Smart-Agriculture-Programming/project_final/NanumGothic.ttf'
 prop = fm.FontProperties(fname=font_path)
 
 # matplotlib에 폰트 설정
