@@ -1,4 +1,4 @@
-# main_code.py를 통해 받아온 센서 데이터를 그래프와 데이터 프레임을 보여주는 웹서버를 만드는 코드(파이참 가상환경 코드)
+# main_code.py를 통해 받아온 센서 데이터로 그래프와 데이터 프레임을 보여주는 웹서버를 만든 코드
 
 import time
 import streamlit as st
