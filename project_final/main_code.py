@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # 시리얼 포트 설정
-SERIAL_PORT = '/dev/ttyUSB1'  # 환경에 맞게 수정
+SERIAL_PORT = '/dev/ttyUSB0'  # 환경에 맞게 수정
 BAUD_RATE = 115200
 TIMEOUT = 1
 
