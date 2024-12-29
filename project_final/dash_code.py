@@ -18,10 +18,10 @@ plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
 # Streamlit 설정
 st.set_page_config(page_title="온실 환경 대시보드", layout="wide")  # 'wide' 레이아웃으로 설정
 
-# 제목을 가운데 정렬
+# 제목
 st.markdown("<h1 style='text-align: center;'>온실 내부 온도 균일 제어 시스템</h1>", unsafe_allow_html=True)
 
-# "실시간 온도 데이터" 제목을 가운데 정렬하고 간격을 띄움
+# 소제목
 st.markdown("<h2 style='text-align: center; padding-top: 30px;'>실시간 온도 데이터 그래프</h2>", unsafe_allow_html=True)
 
 # 팬 상태
@@ -34,11 +34,11 @@ central_chart = st.empty()
 st.markdown("<h3 style='text-align: center; padding-top: 30px;'>실시간 온도 데이터 값</h3>", unsafe_allow_html=True)
 sensor_table = st.empty()
 
-# 팬 상태 표시를 위한 별도 테이블
+# 팬 상태 테이블
 st.markdown("<h3 style='text-align: center; padding-top: 30px;'>팬 상태</h3>", unsafe_allow_html=True)
 fan_state_display = st.empty()
 
-# 센서 스레드 시작: Streamlit에서 한 번만 실행되도록 보장
+# 센서 스레드 시작
 @st.cache_resource
 def initialize_sensor_thread():
     return start_sensor_thread()
