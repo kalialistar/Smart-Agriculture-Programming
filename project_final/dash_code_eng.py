@@ -37,28 +37,28 @@ def initialize_sensor_thread():
 
 stop_event = initialize_sensor_thread()
 
-# 그래프 그리기 함수
+# Function to plot temperature graphs
 def plot_temperature_graph(ax, time_data, temp_data, title):
-    ax.plot(time_data, temp_data, color='red')  # 그래프 선을 빨간색으로 설정
-    ax.set_xlabel('시간 (초)', color='black')  # X축 라벨
-    ax.set_ylabel('온도 (°C)', color='black')  # Y축 라벨
-    ax.set_title(title, color='black')  # 그래프 제목
-    ax.grid(False)  # 그리드 제거
+    ax.plot(time_data, temp_data, color='red')  # Set graph line color to red
+    ax.set_xlabel('Time (seconds)', color='black')  # X-axis label
+    ax.set_ylabel('Temperature (°C)', color='black')  # Y-axis label
+    ax.set_title(title, color='black')  # Graph title
+    ax.grid(False)  # Disable grid
     ax.tick_params(axis='x', colors='black')
     ax.tick_params(axis='y', colors='black')
 
 try:
     while True:
         with data_lock:
-            # 그래프 크기 크게 설정
-            fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))  # 그래프 크기 크게 설정
+            # Set graph size
+            fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))  # Set larger graph size
 
-            # 중앙부, 좌측면, 우측면 온도 그래프
-            plot_temperature_graph(ax1, list(range(len(graph_data["중앙부 온도"]))), list(graph_data["중앙부 온도"]), "중앙부 온도")
-            plot_temperature_graph(ax2, list(range(len(graph_data["좌측면 온도"]))), list(graph_data["좌측면 온도"]), "좌측면 온도")
-            plot_temperature_graph(ax3, list(range(len(graph_data["우측면 온도"]))), list(graph_data["우측면 온도"]), "우측면 온도")
+            # Temperature graphs for the center, left side, and right side
+            plot_temperature_graph(ax1, list(range(len(graph_data["Center Temperature"]))), list(graph_data["Center Temperature"]), "Center Temperature")
+            plot_temperature_graph(ax2, list(range(len(graph_data["Left Side Temperature"]))), list(graph_data["Left Side Temperature"]), "Left Side Temperature")
+            plot_temperature_graph(ax3, list(range(len(graph_data["Right Side Temperature"]))), list(graph_data["Right Side Temperature"]), "Right Side Temperature")
 
-            # Streamlit에서 matplotlib 그래프 표시
+            # Display matplotlib graph in Streamlit
             central_chart.pyplot(fig)
 
             # 센서 데이터 테이블 업데이트
