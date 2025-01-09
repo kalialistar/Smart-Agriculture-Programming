@@ -7,13 +7,13 @@ import matplotlib as mpl
 import matplotlib.font_manager as fm
 from main_code import sensor_data, graph_data, start_sensor_thread, data_lock
 
-# 폰트 경로 설정
-font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'  # 폰트 경로
-prop = fm.FontProperties(fname=font_path)
+# # 폰트 경로 설정
+# font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'  # 폰트 경로
+# prop = fm.FontProperties(fname=font_path)
 
-# matplotlib에 폰트 설정
-plt.rcParams['font.family'] = prop.get_name()
-plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+# # matplotlib에 폰트 설정
+# plt.rcParams['font.family'] = prop.get_name()
+# plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
 
 # Streamlit 설정
 st.set_page_config(page_title="온실 환경 대시보드", layout="wide")  # 'wide' 레이아웃으로 설정
